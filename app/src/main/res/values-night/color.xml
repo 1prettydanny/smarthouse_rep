@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="colorPrimary">#F3F3F3</color>
+    <color name="colorPrimaryDark">#323232</color>
+    <color name="colorAccent">#000000</color>
+    <color name="titleTextColor">#9C27B0</color>
+    <color name="logoBackgroundColor">#FCEDD7</color>
+    <color name="primaryButtonColor">#3498db</color>
+    <color name="secondaryButtonColor">#FF5722</color>
+    <color name="pageBackgroundColor">@drawable/page_gradient</color>
+    <color name="primaryTextColor">#333333</color>
+    <color name="color_hint">#8B333333</color>
+    <color name="_333333">#333333</color>
+    <color name="tittle_home">#2F2C40</color>
+    <color name="btn_secondary">#FD9988</color>
+    <color name="menuSelectedColor">#FF5722</color>
+    <color name="transparent">#00000000</color>
+    <color name="ic_launcher_background">#FCEDD7</color>
+</resources>

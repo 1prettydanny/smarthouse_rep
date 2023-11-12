@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pageBackgroundColor"
+    android:orientation="vertical"
+    android:padding="30dp"
+    tools:context=".CreateHomeActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font_high"
+                android:gravity="center"
+                android:text="@string/welcome_to_home_creater"
+                android:textAllCaps="true"
+                android:textColor="@color/tittle_home"
+                android:textSize="13pt"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_to_home_creater_text"
+                android:textColor="@color/_333333"
+                android:textSize="8pt" />
+
+            <EditText
+                android:id="@+id/home_name_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_edit_text"
+                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789"
+                android:ems="10"
+                android:hint="@string/your_home_name"
+                android:inputType="text|textNoSuggestions"
+                android:padding="9dp"
+                android:textColor="@color/_333333"
+                android:textColorHint="@color/color_hint" />
+
+            <TextView
+                android:id="@+id/error_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textColor="@color/red"
+                android:visibility="invisible" />
+
+            <CheckBox
+                android:id="@+id/cb_control"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:buttonTint="@color/_333333"
+
+                android:text="@string/heating_control"
+                android:textAllCaps="false"
+                android:textColor="@color/_333333"
+                android:textColorHint="@color/_333333" />
+
+            <Button
+                android:id="@+id/create_home_btn"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="@color/btn_secondary"
+                android:text="@string/create_my_home"
+                android:textColor="@color/white"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</LinearLayout>

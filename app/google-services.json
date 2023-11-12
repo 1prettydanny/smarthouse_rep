@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "831396624999",
+    "project_id": "smarthouse-9da6b",
+    "storage_bucket": "smarthouse-9da6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831396624999:android:4a27c10183ad684af732c2",
+        "android_client_info": {
+          "package_name": "application.mobile.smarthouse"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831396624999-cge11siebpulul6626hbuj43sec18oio.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "application.mobile.smarthouse",
+            "certificate_hash": "0daaacece3b87a07e4b6811b907a3efd29404c89"
+          }
+        },
+        {
+          "client_id": "831396624999-9u156ac1ctfpvdbh105vod77uh4nv81u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUgZ-W3_zi7-aJGxa7QvlPJNhSpS4X0vA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831396624999-9u156ac1ctfpvdbh105vod77uh4nv81u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
