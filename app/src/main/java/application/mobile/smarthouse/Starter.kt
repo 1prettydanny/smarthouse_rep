@@ -174,8 +174,6 @@ class Starter : AppCompatActivity() {
                 editor.apply()
 
 
-
-
                 UserInfo.initializationUser(this@Starter) {
 
                     if (UserInfo.user_id == "" && UserInfo.name == "" && UserInfo.email == "") {

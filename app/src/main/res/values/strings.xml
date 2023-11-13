@@ -19,4 +19,5 @@
     <string name="profile">Profile</string>
     <string name="short_home_name">The home name is too short. Try using a longer name</string>
     <string name="long_home_name">The home name is too long. Try using a shorter name</string>
+    <string name="devices">Devices</string>
 </resources>

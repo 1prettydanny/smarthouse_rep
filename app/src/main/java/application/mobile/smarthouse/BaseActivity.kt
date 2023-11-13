@@ -81,7 +81,7 @@ class BaseActivity : AppCompatActivity() {
                             .replace(R.id.nav_host_fragment_activity_base, devicesFragment)
                             .commit()
 
-                        title.text = "Devices"
+                        title.text = getString(R.string.devices)
                         return@OnNavigationItemSelectedListener true
                     }
 
@@ -91,7 +91,7 @@ class BaseActivity : AppCompatActivity() {
                             .replace(R.id.nav_host_fragment_activity_base, profileFragment)
                             .commit()
 
-                        title.text = "Profile"
+                        title.text = getString(R.string.profile)
                         return@OnNavigationItemSelectedListener true
 
                     }
