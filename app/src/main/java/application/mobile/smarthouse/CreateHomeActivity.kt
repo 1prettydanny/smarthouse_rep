@@ -21,9 +21,9 @@ class CreateHomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 
-
         binding = ActivityCreateHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
 
         var myTask : TimerTask? =null

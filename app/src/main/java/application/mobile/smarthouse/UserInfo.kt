@@ -1,18 +1,10 @@
 package application.mobile.smarthouse
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.ktx.storage
 import java.io.File
-import java.io.FileOutputStream
-import java.lang.Exception
 
 
 object UserInfo {

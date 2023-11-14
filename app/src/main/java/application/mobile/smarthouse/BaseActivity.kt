@@ -32,6 +32,22 @@ class BaseActivity : AppCompatActivity() {
         setContentView(binding.root)
         toolbar = binding.toolbar
         toolbar.inflateMenu(R.menu.home_menu)
+        toolbar.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.addRoom ->{
+
+                    val intent = Intent(this, CreateRoomActivity::class.java)
+                    intent.putExtra("home_id",UserInfo.homes.first())
+                    startActivity(intent)
+                    return@setOnMenuItemClickListener true
+
+                }
+
+                else -> {
+                    return@setOnMenuItemClickListener false
+                }
+            }
+        }
         val customToolbar = layoutInflater.inflate(R.layout.custom_toolbar_layout, null)
         val title = customToolbar.findViewById<TextView>(R.id.toolbar_title)
 

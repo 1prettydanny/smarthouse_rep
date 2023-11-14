@@ -3,14 +3,11 @@ package application.mobile.smarthouse
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import application.mobile.smarthouse.databinding.ActivityStarterBinding
-import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -25,12 +22,7 @@ import com.google.android.gms.tasks.Task
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import java.lang.Exception
-import java.net.HttpURLConnection
-import java.net.URL
 
 
 const val RS_SIGN_IN = 1
@@ -100,12 +92,18 @@ class Starter : AppCompatActivity() {
                                 val userName = jsonObject?.getString("name")
                                 val userEmail = jsonObject?.getString("email")
                                 val imageUrl = "https://graph.facebook.com/$userId/picture?type=large"
+                              
+                                val image = GlobalObj.storage.child("profilePhoto/${userId.toString()}/profileph.jpg")
+
                                 val editor = sharedPreferences.edit()
                                 editor.putString("userId", userId)
                                 editor.putString("userName", userName)
                                 editor.putString("userEmail", userEmail)
                                 editor.apply()
 
+                                uploadProfileImage(userId.toString(),imageUrl)
+
+                                UserInfo.saveProfileImage(this@Starter, image){}
 
 
                                 UserInfo.initializationUser(this@Starter) {
@@ -116,7 +114,6 @@ class Starter : AppCompatActivity() {
                                             "user_id" to userId,
                                             "name" to userName,
                                             "email" to userEmail,
-                                            "photo" to imageUrl
                                         )
 
                                         GlobalObj.db.collection("users").add(user)

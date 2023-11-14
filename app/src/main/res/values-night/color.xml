@@ -18,4 +18,5 @@
     <color name="menuSelectedColor">#FF5722</color>
     <color name="transparent">#00000000</color>
     <color name="ic_launcher_background">#FCEDD7</color>
+    <color name="green">#C1D9D9</color>
 </resources>

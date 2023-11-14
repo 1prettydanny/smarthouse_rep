@@ -20,4 +20,5 @@
     <string name="short_home_name">The home name is too short. Try using a longer name</string>
     <string name="long_home_name">The home name is too long. Try using a shorter name</string>
     <string name="devices">Devices</string>
+    <string name="creare_room_btn">Create my room</string>
 </resources>
