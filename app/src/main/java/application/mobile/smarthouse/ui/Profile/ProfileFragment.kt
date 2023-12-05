@@ -37,7 +37,7 @@ class ProfileFragment : Fragment() {
 
             val image = GlobalObj.storage.child("profilePhoto/${UserInfo.user_id}/profileph.jpg")
 
-            UserInfo.saveProfileImage(requireContext(),image){}
+            UserInfo.saveProfileImage(requireContext(),image)
 
             image.downloadUrl.addOnSuccessListener { uri ->
                Picasso.get().load(uri).into(binding.profileImage)
@@ -55,6 +55,7 @@ class ProfileFragment : Fragment() {
             editor.clear()
             editor.apply()
 
+            GlobalObj.auth.signOut()
             UserInfo.clearInfo()
             val intent = Intent(requireContext(), Starter::class.java)
             startActivity(intent)

@@ -17,6 +17,7 @@ import application.mobile.smarthouse.ui.Profile.ProfileFragment
 import application.mobile.smarthouse.ui.dashboard.DevicesFragment
 import application.mobile.smarthouse.ui.home.HomeFragment
 
+
 class BaseActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBaseBinding

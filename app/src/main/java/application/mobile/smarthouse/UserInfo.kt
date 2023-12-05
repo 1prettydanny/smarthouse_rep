@@ -66,13 +66,12 @@ object UserInfo {
             }
     }
 
-    fun saveProfileImage(context: Context, image: StorageReference, callback: () -> Unit) {
+    fun saveProfileImage(context: Context, image: StorageReference) {
 
             val filePath = File(context.filesDir, "profileph.jpg")
 
             image.getFile(filePath).addOnSuccessListener {
                 profile_ph = filePath.absolutePath
-                callback()
             }
                 .addOnFailureListener {
                     Toast.makeText(context, ""+ it.message, Toast.LENGTH_SHORT).show()

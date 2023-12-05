@@ -116,7 +116,5 @@ class CreateHomeActivity : AppCompatActivity() {
                 intent.addCategory(Intent.CATEGORY_HOME)
                 startActivity(intent)
         }
-        else
-            super.onBackPressed()
     }
 }
