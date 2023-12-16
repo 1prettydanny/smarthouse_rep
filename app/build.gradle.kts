@@ -44,6 +44,8 @@ android {
 
 
 dependencies {
+    implementation("androidx.navigation:navigation-fragment-ktx:latest.release")
+    implementation("androidx.navigation:navigation-ui-ktx:latest.release")
     implementation ("com.google.android.gms:play-services-auth:latest.release")
     implementation ("com.google.firebase:firebase-auth:latest.release")
     implementation("com.google.firebase:firebase-storage")
@@ -55,12 +57,10 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:latest.release")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.5")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.5")
     implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

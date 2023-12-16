@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import application.mobile.smarthouse.databinding.ActivityCreateHomeBinding
 import java.util.Timer
 import java.util.TimerTask
@@ -23,7 +24,7 @@ class CreateHomeActivity : AppCompatActivity() {
 
         binding = ActivityCreateHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
 
         var myTask : TimerTask? =null
@@ -88,11 +89,12 @@ class CreateHomeActivity : AppCompatActivity() {
 
                 GlobalObj.db.collection("homes").add(home)
 
-                UserInfo.addhome(home_id)
+                UserInfo.addhome(this,home_id) {
 
-                val intent = Intent(this, BaseActivity::class.java)
-                intent.putExtra("home_name", home_name)
-                startActivity(intent)
+                    val intent = Intent(this, BaseActivity::class.java)
+                    intent.putExtra("home_name", home_name)
+                    startActivity(intent)
+                }
 
             }
             else{
@@ -110,11 +112,11 @@ class CreateHomeActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
-        if(UserInfo.homes.isEmpty()) {
-                val intent = Intent(Intent.ACTION_MAIN)
-                intent.addCategory(Intent.CATEGORY_HOME)
-                startActivity(intent)
+    private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val intent = Intent(Intent.ACTION_MAIN)
+            intent.addCategory(Intent.CATEGORY_HOME)
+            startActivity(intent)
         }
     }
 }

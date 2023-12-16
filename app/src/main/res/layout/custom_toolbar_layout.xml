@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/my_toolbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp">
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginEnd="8dp"
+    android:background="@drawable/style_stroke"
+    android:minHeight="?attr/actionBarSize"
+    android:theme="?attr/actionBarTheme">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:id="@+id/toolbar_container">
 
     <ImageView
         android:id="@+id/imageView"
@@ -24,3 +37,4 @@
         android:textSize="17sp"
         android:textStyle="bold" />
 </LinearLayout>
+</androidx.appcompat.widget.Toolbar>

@@ -13,12 +13,12 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="application.mobile.smarthouse.ui.dashboard.DevicesFragment"
+        android:name="application.mobile.smarthouse.ui.dashboard.DashboardFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_devices" />
+        tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_profile"
         android:name="application.mobile.smarthouse.ui.Profile.ProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_profile" />

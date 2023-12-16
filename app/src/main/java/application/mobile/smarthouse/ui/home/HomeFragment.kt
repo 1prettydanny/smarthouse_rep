@@ -1,56 +1,69 @@
 package application.mobile.smarthouse.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.MenuProvider
 import androidx.core.view.forEach
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import application.mobile.smarthouse.CreateRoomActivity
 import application.mobile.smarthouse.R
 import application.mobile.smarthouse.Starter
 import application.mobile.smarthouse.UserInfo
 import application.mobile.smarthouse.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), MenuProvider {
 
     private var _binding: FragmentHomeBinding? = null
 
     private val binding get() = _binding!!
 
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.home_menu, menu)
-
-        val addRoomItem = menu.findItem(R.id.addRoom)
-        val editRoomItem = menu.findItem(R.id.editRoom)
-
-        addRoomItem?.setOnMenuItemClickListener {
-            val intent = Intent(requireContext(), CreateRoomActivity::class.java)
-            intent.putExtra("home_id",UserInfo.homes.first())
-            startActivity(intent)
-            return@setOnMenuItemClickListener true
-        }
-
-        editRoomItem?.setOnMenuItemClickListener {
-            true
-        }
-
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        activity?.addMenuProvider(this@HomeFragment,viewLifecycleOwner, Lifecycle.State.RESUMED)
+
         return root
     }
 
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.home_menu, menu)
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return when (menuItem.itemId) {
+            R.id.addRoom -> {
+                val intent = Intent(requireContext(), CreateRoomActivity::class.java)
+                intent.putExtra("home_id", UserInfo.homes.first())
+                startActivity(intent)
+                true
+            }
+
+            R.id.editRoom -> {
+                true
+            }
+
+            else -> false
+        }
+
+    }
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()

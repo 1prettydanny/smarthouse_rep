@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import application.mobile.smarthouse.databinding.FragmentDevicesBinding
+import application.mobile.smarthouse.databinding.FragmentDashboardBinding
 
-class DevicesFragment : Fragment() {
+class DashboardFragment : Fragment() {
 
-    private var _binding: FragmentDevicesBinding? = null
+    private var _binding: FragmentDashboardBinding? = null
 
     private val binding get() = _binding!!
 
@@ -21,7 +19,7 @@ class DevicesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        _binding = FragmentDevicesBinding.inflate(inflater, container, false)
+        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
         binding.textDashboard.text = "132123123"
 

@@ -23,6 +23,7 @@ class CreateRoomActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_room)
 
         val homeId = intent.getStringExtra("home_id")
+
         val roomTypes = arrayListOf(
             RoomType("Classic", R.drawable.home),
             RoomType("Kitchen", R.drawable.home),
@@ -91,10 +92,6 @@ class CreateRoomActivity : AppCompatActivity() {
                     roomTypeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
                 }
             }
-
-
-
-
 
             return view
         }
