@@ -26,9 +26,17 @@
         android:theme="@style/Theme.SmartHouse"
         tools:targetApi="31">
         <activity
+            android:name=".ConnectionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RoomSettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_room_setings"
+            android:theme="@style/Theme.SmartHouse" />
+        <activity
             android:name=".CreateRoomActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".CreateHomeActivity"
             android:exported="false"

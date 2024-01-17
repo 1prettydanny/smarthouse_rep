@@ -33,7 +33,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/welcome_to_home_creater_text"
+                android:text="@string/home_creater_text"
                 android:textColor="@color/_333333"
                 android:textSize="8pt" />
 
@@ -52,7 +52,7 @@
                 android:textColorHint="@color/color_hint" />
 
             <TextView
-                android:id="@+id/error_input"
+                android:id="@+id/home_error_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"

@@ -9,7 +9,7 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:fillViewport="true">
 
         <LinearLayout
@@ -22,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Welcome to Room Creater"
+                android:text="@string/welcome_to_room_creater"
                 android:textColor="@color/_333333"
                 android:textSize="13pt"
                 android:textStyle="bold" />
@@ -30,12 +30,12 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/welcome_to_home_creater_text"
+                android:text="@string/room_creater_text"
                 android:textColor="@color/_333333"
                 android:textSize="8pt" />
 
             <EditText
-                android:id="@+id/editTextText2"
+                android:id="@+id/room_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -49,11 +49,19 @@
                 android:textColorHint="@color/color_hint" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/room_error_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/welcome_to_home_creater_text"
+                android:layout_marginTop="10dp"
+                android:text=""
+                android:textColor="@color/red"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/room_creater_text"
                 android:textColor="@color/_333333"
                 android:textSize="8pt" />
 
@@ -65,14 +73,23 @@
                 android:popupBackground="@drawable/rounded_spinner"
                 android:scrollbarThumbHorizontal="@color/ic_launcher_background" />
 
+            <TextView
+                android:id="@+id/room_type_error_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/choose_room_type_error"
+                android:textColor="@color/red"
+                android:visibility="gone" />
+
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/create_room_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/rounded_button"
+                android:text="@string/create_room_btn"
                 android:backgroundTint="@color/btn_secondary"
-                android:text="@string/creare_room_btn"
                 android:textColor="@color/white"
                 android:textStyle="bold" />
         </LinearLayout>

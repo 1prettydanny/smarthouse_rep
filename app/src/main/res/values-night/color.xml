@@ -11,6 +11,7 @@
     <color name="secondaryButtonColor">#FF5722</color>
     <color name="pageBackgroundColor">@drawable/page_gradient</color>
     <color name="primaryTextColor">#333333</color>
+    <color name="red">#BD0C0C</color>
     <color name="color_hint">#8B333333</color>
     <color name="_333333">#333333</color>
     <color name="tittle_home">#2F2C40</color>
@@ -19,4 +20,6 @@
     <color name="transparent">#00000000</color>
     <color name="ic_launcher_background">#FCEDD7</color>
     <color name="green">#C1D9D9</color>
+    <color name="select_green">#B3C8C8</color>
+    <color name="start_gradient">#FFFAF7</color>
 </resources>

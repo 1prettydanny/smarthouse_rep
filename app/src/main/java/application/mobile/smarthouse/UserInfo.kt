@@ -12,8 +12,9 @@ object UserInfo {
 
     var user_id : String = ""
     var name  : String = ""
-    var email : String = ""
+    private var email : String = ""
     var homes : MutableList<String> = mutableListOf()
+    var selected_home: Int = 0
     var profile_ph: String = ""
 
     fun initializationUser(context:Context, callback: () -> Unit){
@@ -23,8 +24,8 @@ object UserInfo {
         val userId = sharedPreferences.getString("userId", "")
         val userName = sharedPreferences.getString("userName", "")
         val userEmail = sharedPreferences.getString("userEmail", "")
+        selected_home = sharedPreferences.getInt("selectedHome", 0)
         profile_ph = sharedPreferences.getString("imagePath", "").toString()
-
         if (userId != "" && userName!="" && userEmail!="") {
             GlobalObj.db.collection("users")
                 .whereEqualTo("user_id", userId)
@@ -39,6 +40,7 @@ object UserInfo {
                         if (document["homes"] != null)
                             homes = document["homes"] as MutableList<String>
                     }
+
                     callback()
                 }
                 .addOnFailureListener { exception ->
@@ -46,31 +48,25 @@ object UserInfo {
                         .show()
                     callback()
                 }
+
         }
         else {
             callback()
         }
     }
 
-
-    fun addhome(context: Context, home_id: String,callback: () -> Unit){
+    fun addHome(context: Context, home_id: String, callback: () -> Unit){
 
         homes.add(home_id)
         val userReference = GlobalObj.db.collection("users").document(user_id)
 
-        // Обновление конкретного поля в документе
         userReference.update("homes", homes)
-            .addOnCompleteListener { updateTask ->
-                if (updateTask.isSuccessful) {
-                    // Успешное обновление поля
-                    callback()
-                } else {
-                    // Обработка ошибок при обновлении
-                }
+            .addOnCompleteListener {
+                callback()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(context, ""+e.message, Toast.LENGTH_SHORT).show()
-                val i =0
+                callback()
             }
     }
 
@@ -88,8 +84,8 @@ object UserInfo {
             }
                 .addOnFailureListener {
                     Toast.makeText(context, ""+ it.message, Toast.LENGTH_SHORT).show()
+                    callback()
             }
-
 
     }
 

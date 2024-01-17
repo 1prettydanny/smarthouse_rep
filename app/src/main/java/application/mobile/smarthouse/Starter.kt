@@ -7,28 +7,25 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import application.mobile.smarthouse.databinding.ActivityStarterBinding
-import application.mobile.smarthouse.ui.home.HomeFragment
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.GraphRequest
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.Scope
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.storage.StorageReference
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import java.io.ByteArrayOutputStream
@@ -74,7 +71,8 @@ class Starter : AppCompatActivity() {
                         mGoogleSignInClient.signOut()
 
                         val signInIntent = mGoogleSignInClient.signInIntent
-                        startActivityForResult(signInIntent, RS_SIGN_IN)
+                            //startActivityForResult(signInIntent, RS_SIGN_IN)
+                        signInLauncher.launch(signInIntent)
                     }
 
                     getStartedFacebook.registerCallback(callbackManager,
@@ -100,12 +98,27 @@ class Starter : AppCompatActivity() {
                     Intent(this@Starter, CreateHomeActivity::class.java)
                 } else {
                     Intent(this@Starter, BaseActivity::class.java)
+                   // Intent(this@Starter, RoomSettingsActivity::class.java)
                 }
                startActivity(nextIntent)
 
             }
         }
     }
+
+    private val signInLauncher = registerForActivityResult(StartActivityForResult()) { result ->
+        when (result.resultCode) {
+            RESULT_OK -> {
+                val data = result.data
+                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+                handleGoogleSignInResult(task)
+            }
+            else -> {
+
+            }
+        }
+    }
+
     private fun handleFacebookAccessToken(token: AccessToken) {
         val credential = FacebookAuthProvider.getCredential(token.token)
 
@@ -113,23 +126,23 @@ class Starter : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    saveUserDataToDatabase(user)
+                    saveUserToCache(user)
                 } else {
                     Toast.makeText(this@Starter, "Err: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-
-        when(requestCode) {
-            RS_SIGN_IN -> {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-                handleGoogleSignInResult(task)
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//
+//        when(requestCode) {
+//            RS_SIGN_IN -> {
+//                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+//                handleGoogleSignInResult(task)
+//            }
+//        }
+//        super.onActivityResult(requestCode, resultCode, data)
+//    }
 
     private fun handleGoogleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
@@ -148,14 +161,14 @@ class Starter : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         val user = auth.currentUser
-                        saveUserDataToDatabase(user)
+                        saveUserToCache(user)
                     } else {
                         Toast.makeText(this, ""+task.exception, Toast.LENGTH_SHORT).show()
                     }
                 }
         }
 
-        private fun saveUserDataToDatabase(user: FirebaseUser?) {
+        private fun saveUserToCache(user: FirebaseUser?) {
             if (user != null) {
 
 
@@ -169,7 +182,7 @@ class Starter : AppCompatActivity() {
                     editor.apply()
 
 
-                saveUser(user.uid, user.displayName, user.email) {
+                uploadUserToDatabase(user.uid, user.displayName, user.email) {
 
                     UserInfo.initializationUser(this@Starter) {
                         val nextIntent: Intent
@@ -186,25 +199,25 @@ class Starter : AppCompatActivity() {
             }
         }
 
-    fun saveUser(id: String, name: String?, email: String?, callback: () -> Unit){
+    private fun uploadUserToDatabase(id: String, name: String?, email: String?, callback: () -> Unit){
 
         val userReference = GlobalObj.db.collection("users").document(id)
 
         userReference.get()
             .addOnSuccessListener { documentSnapshot ->
                 if (!documentSnapshot.exists()) {
-                    val userfordb = hashMapOf(
+                    val userForDB = hashMapOf(
                         "user_id" to id,
                         "name" to name,
                         "email" to email,
                     )
-                    userReference.set(userfordb)
+                    userReference.set(userForDB)
                 }
                 callback()
             }
     }
 
-    fun uploadProfileImage(imageUrl: String, image: StorageReference) {
+    private fun uploadProfileImage(imageUrl: String, image: StorageReference) {
         Picasso.get()
             .load(imageUrl)
             .into(object : Target {
@@ -240,6 +253,6 @@ class Starter : AppCompatActivity() {
         }
     }
     companion object {
-        const val RS_SIGN_IN = 1
+
     }
 }

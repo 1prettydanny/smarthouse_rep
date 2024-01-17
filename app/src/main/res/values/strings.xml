@@ -10,15 +10,29 @@
     <string name="default_web_client_id">831396624999-9u156ac1ctfpvdbh105vod77uh4nv81u.apps.googleusercontent.com</string>
     <string name="facebook_app_id">284943877854872</string>
     <string name="facebook_client_token">aa05af679ca2449d0ba68c99e28733c7</string>
-    <string name="welcome_to_home_creater">Welcome to \nHome creater</string>
-    <string name="welcome_to_home_creater_text">\nGive your home a name and make it uniquely yours. Add a touch of comfort by enabling heating control – just check the box if you have heating. \n\nLet\'s make your home smarter, together.\n</string>
+
+    //home
     <string name="your_home_name">Your home name...</string>
     <string name="heating_control">Heating control</string>
     <string name="create_my_home">Create my home</string>
     <string name="input_home_name_error">The home name is too short. Try using a longer name</string>
+    <string name="short_home_name_error">The home name is too short. Try using a longer name</string>
+    <string name="long_home_name_error">The home name is too long. Try using a shorter name</string>
+    <string name="welcome_to_home_creater">Welcome to \nHome creater</string>
+    <string name="home_creater_text">\nGive your home a name and make it uniquely yours. Add a touch of comfort by enabling heating control – just check the box if you have heating. \n\nLet\'s make your home smarter, together.\n</string>
+
+
+    //room
+    <string name="your_room_name">Your room name...</string>
+    <string name="welcome_to_room_creater">Welcome to \nRoom creater</string>
+    <string name="short_room_name_error">The room name is too short. Try using a longer name</string>
+    <string name="long_room_name_error">The room name is too long. Try using a shorter name</string>
+    <string name="choose_room_type_error">No one room type has been chosen</string>
+    <string name="room_creater_text">\nGive your home a name and make it uniquely yours. Add a touch of comfort by enabling heating control – just check the box if you have heating. \n\nLet\'s make your home smarter, together.\n</string>
+
+
     <string name="profile">Profile</string>
-    <string name="short_home_name">The home name is too short. Try using a longer name</string>
-    <string name="long_home_name">The home name is too long. Try using a shorter name</string>
     <string name="devices">Devices</string>
-    <string name="creare_room_btn">Create my room</string>
+    <string name="create_room_btn">Create my room</string>
+    <string name="title_activity_room_setings">RoomSetingsActivity</string>
 </resources>

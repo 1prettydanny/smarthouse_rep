@@ -6,7 +6,7 @@
         android:id="@+id/addRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/add_icon"
+        android:icon="@drawable/toolbar_add_room_icon"
         android:iconTint="@color/_333333"
         android:title="Create Room"
         app:showAsAction="always" />
@@ -14,7 +14,7 @@
         android:id="@+id/editRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/edit_icon"
+        android:icon="@drawable/toolbar_edit_ico"
         android:iconTint="@color/_333333"
         android:title="Edit Rooms"
         app:showAsAction="always" />

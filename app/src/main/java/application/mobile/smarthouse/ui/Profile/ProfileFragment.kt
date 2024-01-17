@@ -6,9 +6,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import application.mobile.smarthouse.GlobalObj
+import application.mobile.smarthouse.R
 import application.mobile.smarthouse.Starter
 import application.mobile.smarthouse.UserInfo
 import application.mobile.smarthouse.databinding.FragmentProfileBinding
@@ -33,12 +35,15 @@ class ProfileFragment : Fragment() {
 
         binding.profileName.text = UserInfo.name
 
+
+        val title = activity?.findViewById<TextView>(R.id.toolbar_title)
+        title?.text = getString(R.string.profile)
+
         if(UserInfo.profile_ph == "") {
 
             val image = GlobalObj.storage.child("profilePhoto/${UserInfo.user_id}/profileph.jpg")
 
             UserInfo.saveProfileImage(requireContext(),image){}
-
             image.downloadUrl.addOnSuccessListener { uri ->
                Picasso.get().load(uri).into(binding.profileImage)
             }.addOnFailureListener {}
