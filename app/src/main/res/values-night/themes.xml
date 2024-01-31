@@ -3,8 +3,9 @@
     <style name="Base.Theme.SmartHouse" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:fontFamily">@font/font</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:windowTranslucentStatus">false</item>
+
 
     </style>
 
+    <style name="Theme.SmartHouse" parent="Base.Theme.SmartHouse" />
 </resources>

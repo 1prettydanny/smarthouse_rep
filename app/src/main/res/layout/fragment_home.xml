@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@drawable/page_gradient_home"
     tools:context=".ui.home.HomeFragment">
+
+    <LinearLayout
+        android:id="@+id/empty_room_list_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:orientation="vertical">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/smile_icon"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/press_plus_for_add_your_first_room"
+        android:textColor="@color/_333333" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rooms_recycle_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        app:reverseLayout="true"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

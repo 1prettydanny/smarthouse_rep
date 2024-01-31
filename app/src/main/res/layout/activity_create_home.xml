@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font_high"
                 android:gravity="center"
-                android:text="@string/welcome_to_home_creater"
+                android:text="@string/welcome_to_home_creator"
                 android:textAllCaps="true"
                 android:textColor="@color/tittle_home"
                 android:textSize="13pt"
@@ -33,7 +33,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/home_creater_text"
+                android:text="@string/home_creator_text"
                 android:textColor="@color/_333333"
                 android:textSize="8pt" />
 
@@ -43,10 +43,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/rounded_edit_text"
-                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789"
+                android:digits="abcdefghijklmnopqrstuvwxyz *?!.,';:@/\|()-#$№^&amp;+=% ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789"
                 android:ems="10"
                 android:hint="@string/your_home_name"
-                android:inputType="text|textNoSuggestions"
+                android:inputType="text|textNoSuggestions|textCapSentences"
                 android:padding="9dp"
                 android:textColor="@color/_333333"
                 android:textColorHint="@color/color_hint" />
@@ -60,19 +60,33 @@
                 android:textColor="@color/red"
                 android:visibility="invisible" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please confirm that you are the rightful owner of this home and acknowledge your responsibility for its management within the smart home application. \n\nBy confirming, you agree to take full responsibility for the actions and decisions made through the application, ensuring the security and proper functioning of your smart home devices."
+                android:textSize="8pt"
+                android:textColor="@color/_333333"/>
+
             <CheckBox
-                android:id="@+id/cb_control"
+                android:id="@+id/agree_checkbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
                 android:buttonTint="@color/_333333"
-
-                android:text="@string/heating_control"
+                android:text="@string/i_agree"
                 android:textAllCaps="false"
                 android:textColor="@color/_333333"
                 android:textColorHint="@color/_333333" />
 
+            <TextView
+                android:id="@+id/error_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/please_agree_to_continue_using_the_app"
+                android:textColor="@color/red"
+                android:visibility="gone" />
             <Button
                 android:id="@+id/create_home_btn"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"

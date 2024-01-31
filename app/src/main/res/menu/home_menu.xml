@@ -8,14 +8,7 @@
         android:layout_height="wrap_content"
         android:icon="@drawable/toolbar_add_room_icon"
         android:iconTint="@color/_333333"
-        android:title="Create Room"
+        android:title="@string/toolbar_create_room_text"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/editRoom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:icon="@drawable/toolbar_edit_ico"
-        android:iconTint="@color/_333333"
-        android:title="Edit Rooms"
-        app:showAsAction="always" />
+
 </menu>

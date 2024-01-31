@@ -9,6 +9,7 @@ import android.view.View.OnTouchListener
 import android.view.accessibility.AccessibilityManager.TouchExplorationStateChangeListener
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -27,7 +28,7 @@ class BaseActivity : AppCompatActivity() {
 
         binding = ActivityBaseBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         val customToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.my_toolbar)
         toolbarTitle = customToolbar.findViewById(R.id.toolbar_title)
@@ -35,7 +36,7 @@ class BaseActivity : AppCompatActivity() {
         home_name = intent.getStringExtra("home_name")
         if (home_name == null) {
             GlobalObj.db.collection("homes")
-                .whereEqualTo("home_id", UserInfo.homes[UserInfo.selected_home])
+                .whereEqualTo("home_id", UserInfo.selected_home)
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {

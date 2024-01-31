@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RoomSettingsActivity"
+    android:fillViewport="true"
+    android:background="@drawable/page_gradient"
+    tools:context=".RoomSettingsActivity">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:id="@+id/room_settings_layout"
     android:layout_centerHorizontal="true"
-    android:orientation="vertical"
-    android:background="@drawable/page_gradient">
+    android:orientation="vertical">
 
     <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/headerImage"
@@ -16,6 +22,7 @@
             android:layout_height="wrap_content"
             app:shapeAppearanceOverlay="@style/RoundedTopCorners"
         />
+
 
     <LinearLayout
         android:id="@+id/room_container"
@@ -51,6 +58,7 @@
                         android:id="@+id/room_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
                         android:src="@drawable/room_type_bathroom_ico"
                         android:layout_gravity="center_vertical|start"/>
 
@@ -70,9 +78,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
+                        android:layout_marginEnd="5dp"
                         android:background="@color/transparent"
                         android:padding="5dp"
-                        android:src="@drawable/arrow_up"
+                        android:src="@drawable/check_square_ico"
                         android:visibility="gone"/>
 
                 </androidx.cardview.widget.CardView>
@@ -101,14 +110,14 @@
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
     </LinearLayout>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/categories_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:padding="2dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/categories_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:padding="2dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
 </LinearLayout>
+    </androidx.core.widget.NestedScrollView>

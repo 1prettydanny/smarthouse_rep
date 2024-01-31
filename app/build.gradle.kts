@@ -58,6 +58,7 @@ android {
 dependencies {
     implementation ("androidx.recyclerview:recyclerview:latest.release")
     implementation ("com.github.bumptech.glide:glide:latest.release")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:latest.release")
     implementation("androidx.navigation:navigation-fragment-ktx:latest.release")
     implementation("androidx.navigation:navigation-ui-ktx:latest.release")

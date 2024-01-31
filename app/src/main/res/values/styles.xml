@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="RoundedTopCorners">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">0dp</item>
@@ -7,4 +8,5 @@
         <item name="cornerSizeBottomRight">32dp</item>
         <item name="cornerSizeBottomLeft">32dp</item>
     </style>
+
 </resources>

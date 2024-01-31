@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/page_gradient"
     android:orientation="vertical"
-    android:padding="30dp">
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/back_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:src="@drawable/arrow_left"
+        android:clickable="true"
+        android:translationZ="1dp"/>
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -22,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/welcome_to_room_creater"
+                android:text="@string/welcome_to_room_creator"
                 android:textColor="@color/_333333"
                 android:textSize="13pt"
                 android:textStyle="bold" />
@@ -30,7 +39,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/room_creater_text"
+                android:text="@string/room_creator_text"
                 android:textColor="@color/_333333"
                 android:textSize="8pt" />
 
@@ -40,10 +49,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/rounded_edit_text"
-                android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789"
+                android:digits="abcdefghijklmnopqrstuvwxyz *?!.,';:@/\|()-#$№^&amp;+=% ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789"
                 android:ems="10"
-                android:hint="Your room name..."
-                android:inputType="text|textNoSuggestions"
+                android:hint="@string/your_room_name"
+                android:inputType="text|textNoSuggestions|textCapSentences"
                 android:padding="9dp"
                 android:textColor="@color/_333333"
                 android:textColorHint="@color/color_hint" />
@@ -61,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="@string/room_creater_text"
+                android:text="@string/room_choose_type_text"
                 android:textColor="@color/_333333"
                 android:textSize="8pt" />
 
@@ -95,4 +104,4 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+</RelativeLayout>

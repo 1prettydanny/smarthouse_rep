@@ -60,6 +60,7 @@ class CreateHomeActivity : AppCompatActivity() {
                     } else {
                         myTask?.cancel()
                         binding.homeErrorInput.visibility = View.INVISIBLE
+                        binding.errorInput.visibility = View.GONE
                         binding.homeNameInput.background = ContextCompat.getDrawable(this@CreateHomeActivity,R.drawable.rounded_selected_edit_text)
                     }
                 }catch (_:Exception){
@@ -81,15 +82,19 @@ class CreateHomeActivity : AppCompatActivity() {
 
             val home_name: String = binding.homeNameInput.text.toString().trim()
 
-            if(home_name.length in 3..25)
+            if(home_name.length in 3..25 && !binding.agreeCheckbox.isActivated)
             {
                 uploadHomeToDatabase(home_name)
             }
             else{
-                if(home_name.length <= 3 )
-                    binding.homeErrorInput.text = getString(R.string.short_home_name_error)
-                else
-                    binding.homeErrorInput.text = getString(R.string.long_home_name_error)
+                if(binding.agreeCheckbox.isActivated){
+                    binding.errorInput.visibility = View.VISIBLE
+                }
+                    if (home_name.length <= 3)
+                        binding.homeErrorInput.text = getString(R.string.short_home_name_error)
+                    else
+                        binding.homeErrorInput.text = getString(R.string.long_home_name_error)
+
             }
 
         }
@@ -100,18 +105,23 @@ class CreateHomeActivity : AppCompatActivity() {
 
         val home = hashMapOf(
             "home_id" to home_id,
-            "home_name" to home_name,
-            "heating_status" to binding.cbControl.isChecked
+            "user_id" to UserInfo.user_id,
+            "home_name" to home_name
         )
 
         GlobalObj.db.collection("homes").add(home)
 
-        UserInfo.addHome(this, home_id) {
-            val intent = Intent(this, BaseActivity::class.java)
-            intent.putExtra("home_name", home_name)
-            // HomeFragment().arguments?.getString(home_name)
-            startActivity(intent)
-        }
+            UserInfo.selected_home = home_id
+
+            val userReference = GlobalObj.db.collection("users").document(UserInfo.user_id)
+            userReference.update("selected_home", home_id)
+            .addOnCompleteListener {
+                UserInfo.selected_home = home_id
+                val intent = Intent(this, BaseActivity::class.java)
+                intent.putExtra("home_name", home_name)
+                // HomeFragment().arguments?.getString(home_name)
+                startActivity(intent)
+            }
     }
 
 

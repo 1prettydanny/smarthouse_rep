@@ -9,7 +9,8 @@
         android:id="@+id/navigation_home"
         android:name="application.mobile.smarthouse.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -22,4 +23,5 @@
         android:name="application.mobile.smarthouse.ui.Profile.ProfileFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_profile" />
-</navigation>
+
+   </navigation>

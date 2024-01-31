@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">SmartHouse</string>
     <string name="title_activity_base">BaseActivity</string>
+    <string name="title_activity_room_settings">RoomSettingsActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -18,21 +19,29 @@
     <string name="input_home_name_error">The home name is too short. Try using a longer name</string>
     <string name="short_home_name_error">The home name is too short. Try using a longer name</string>
     <string name="long_home_name_error">The home name is too long. Try using a shorter name</string>
-    <string name="welcome_to_home_creater">Welcome to \nHome creater</string>
-    <string name="home_creater_text">\nGive your home a name and make it uniquely yours. Add a touch of comfort by enabling heating control – just check the box if you have heating. \n\nLet\'s make your home smarter, together.\n</string>
+    <string name="welcome_to_home_creator">Welcome to \nHome creator</string>
+    <string name="home_creator_text">\nGive your home a name and make it uniquely yours. Add a touch of comfort by enabling heating control – just check the box if you have heating. \n\nLet\'s make your home smarter, together.\n</string>
 
 
     //room
     <string name="your_room_name">Your room name...</string>
-    <string name="welcome_to_room_creater">Welcome to \nRoom creater</string>
+    <string name="welcome_to_room_creator">Welcome to \nRoom creator</string>
     <string name="short_room_name_error">The room name is too short. Try using a longer name</string>
     <string name="long_room_name_error">The room name is too long. Try using a shorter name</string>
     <string name="choose_room_type_error">No one room type has been chosen</string>
-    <string name="room_creater_text">\nGive your home a name and make it uniquely yours. Add a touch of comfort by enabling heating control – just check the box if you have heating. \n\nLet\'s make your home smarter, together.\n</string>
-
+    <string name="room_creator_text">\nJust like a loving family, each room in your house is like a unique child, craving its own identity and care. It\'s time to give each little one – your rooms – a special name to make them feel cherished.  \n\nSo, go ahead and give each room a name, ensuring they feel special and not mixed up in the family chaos!</string>
+    <string name="room_choose_type_text">\nAs each child has their predispositions, each room has its own unique character. \n\nChoose the room type, and we\'ll present devices crafted to enhance its distinct features.</string>
 
     <string name="profile">Profile</string>
     <string name="devices">Devices</string>
     <string name="create_room_btn">Create my room</string>
-    <string name="title_activity_room_setings">RoomSetingsActivity</string>
+    <string name="toolbar_edit_rooms_text">Edit room</string>
+    <string name="toolbar_create_room_text">Create Room</string>
+    <string name="press_plus_for_add_your_first_room">Press plus for add your first room</string>
+    <string name="i_agree">I agree</string>
+    <string name="please_agree_to_continue_using_the_app">Please agree to continue using the app</string>
+
+
+    <string name="change_picture">Change picture</string>
+    <string name="delete_room">Delete room</string>
 </resources>

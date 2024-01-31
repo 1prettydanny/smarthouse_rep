@@ -13,8 +13,7 @@ object UserInfo {
     var user_id : String = ""
     var name  : String = ""
     private var email : String = ""
-    var homes : MutableList<String> = mutableListOf()
-    var selected_home: Int = 0
+    var selected_home: String = ""
     var profile_ph: String = ""
 
     fun initializationUser(context:Context, callback: () -> Unit){
@@ -24,7 +23,6 @@ object UserInfo {
         val userId = sharedPreferences.getString("userId", "")
         val userName = sharedPreferences.getString("userName", "")
         val userEmail = sharedPreferences.getString("userEmail", "")
-        selected_home = sharedPreferences.getInt("selectedHome", 0)
         profile_ph = sharedPreferences.getString("imagePath", "").toString()
         if (userId != "" && userName!="" && userEmail!="") {
             GlobalObj.db.collection("users")
@@ -37,8 +35,8 @@ object UserInfo {
                         user_id = document["user_id"].toString()
                         name = document["name"].toString()
                         email = document["email"].toString()
-                        if (document["homes"] != null)
-                            homes = document["homes"] as MutableList<String>
+                        if(document["selected_home"] != null)
+                        selected_home = document["selected_home"].toString()
                     }
 
                     callback()
@@ -55,20 +53,7 @@ object UserInfo {
         }
     }
 
-    fun addHome(context: Context, home_id: String, callback: () -> Unit){
 
-        homes.add(home_id)
-        val userReference = GlobalObj.db.collection("users").document(user_id)
-
-        userReference.update("homes", homes)
-            .addOnCompleteListener {
-                callback()
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(context, ""+e.message, Toast.LENGTH_SHORT).show()
-                callback()
-            }
-    }
 
 
     fun saveProfileImage(context: Context, image: StorageReference, callback: () -> Unit) {
@@ -93,8 +78,8 @@ object UserInfo {
         user_id = ""
         name   = ""
         email  = ""
-        homes  = mutableListOf()
         profile_ph = ""
+        selected_home =""
     }
 }
 private lateinit var sharedPreferences: SharedPreferences

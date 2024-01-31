@@ -44,7 +44,7 @@ class Starter : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
 
-        UserInfo.initializationUser(this@Starter) {
+        UserInfo.initializationUser(this) {
             if (currentUser == null) {
 
                 binding = ActivityStarterBinding.inflate(layoutInflater)
@@ -93,12 +93,11 @@ class Starter : AppCompatActivity() {
                 }
             } else {
 
-                val nextIntent = if (UserInfo.homes.isEmpty()) {
+                val nextIntent = if (UserInfo.selected_home == "") {
 
                     Intent(this@Starter, CreateHomeActivity::class.java)
                 } else {
                     Intent(this@Starter, BaseActivity::class.java)
-                   // Intent(this@Starter, RoomSettingsActivity::class.java)
                 }
                startActivity(nextIntent)
 
@@ -187,7 +186,7 @@ class Starter : AppCompatActivity() {
                     UserInfo.initializationUser(this@Starter) {
                         val nextIntent: Intent
 
-                        if (UserInfo.homes.isEmpty()) {
+                        if (UserInfo.selected_home=="") {
                             nextIntent = Intent(this@Starter, CreateHomeActivity::class.java)
                         } else {
                             nextIntent = Intent(this@Starter, BaseActivity::class.java)
