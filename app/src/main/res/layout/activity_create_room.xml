@@ -7,13 +7,13 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+
     <ImageView
-        android:id="@+id/back_btn"
+        android:id="@+id/cancel_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:src="@drawable/arrow_left"
-        android:clickable="true"
+        android:src="@drawable/cancel_ico"
+        android:layout_alignParentEnd="true"
         android:translationZ="1dp"/>
 
     <androidx.core.widget.NestedScrollView
@@ -75,7 +75,7 @@
                 android:textSize="8pt" />
 
             <Spinner
-                android:id="@+id/spinner"
+                android:id="@+id/room_type_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/page_gradient"

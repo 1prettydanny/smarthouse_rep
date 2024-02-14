@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/dialog_text"
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/_333333"
+        android:textSize="8pt"/>
+
+
+    <Button
+        android:id="@+id/ok_btn"
+        android:layout_width="50dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/ok_btn_text"
+        android:textColor="@color/white"
+        android:layout_below="@+id/dialog_text"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#EF9A8C"
+        android:layout_alignParentEnd="true"
+        android:stateListAnimator="@null"/>
+
+    <Button
+        android:id="@+id/cancel_btn"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/dialog_text"
+        android:text="@string/cancel_btn_text"
+        android:textColor="@color/white"
+        android:stateListAnimator="@null"
+        android:background="@drawable/rounded_button"
+        android:backgroundTint="#EF9A8C"
+        android:layout_gravity="end"
+        />
+
+</RelativeLayout>

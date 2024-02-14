@@ -25,8 +25,8 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
         for (document in result) {
             val id = document["room_id"].toString()
             val name = document["room_name"].toString()
-            val image = document["room_image"].toString().toInt()
-            val type = document["room_type"].toString().toInt()
+            val image = document["room_image"].toString()
+            val type = document["room_type"].toString()
             rooms.add(Room(id, name, image, type, false))
         }
 

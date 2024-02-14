@@ -1,5 +1,7 @@
 package application.mobile.smarthouse
 
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.ClipData
 import android.content.ClipDescription
 import android.content.Intent
@@ -15,43 +17,22 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import application.mobile.smarthouse.databinding.ActivityRoomSettingsBinding
-import com.bumptech.glide.Glide
-import kotlinx.coroutines.tasks.await
 import java.util.UUID
 
-data class Category(val name: String, val icon: Int, val devices: MutableList<Device> = mutableListOf())
-data class Device(var name: String, var icon: Int){
-    companion object {
-        private val countersMap = mutableMapOf<Int, Int>()
-
-        fun getNextId(icon: Int): Int {
-            val counter = countersMap.getOrDefault(icon, 0) + 1
-            countersMap[icon] = counter
-            return counter
-        }
-        fun getLastId(icon: Int): Int {
-            val counter = countersMap.getOrDefault(icon, 0) - 1
-            countersMap[icon] = counter
-            return counter
-        }
-
-        fun countersClear(){
-            countersMap.clear()
-        }
-    }
-}
-
+data class Category(val name: String, val icon: Int, val devices: MutableList<ConnectDevice> = mutableListOf())
+data class ConnectDevice(var name: String, var icon: Int, val category: String)
 class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
 
     private lateinit var binding: ActivityRoomSettingsBinding
     private lateinit var roomAdapter: RoomAdapter
     private lateinit var roomDevicesRV: RecyclerView
-    private lateinit var room_id: String
-    private lateinit var room_name: String
-    private var room_type: Int = -1
+    private lateinit var roomId: String
+    private lateinit var roomName: String
+    private lateinit var roomType: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,44 +45,40 @@ class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
         Device.countersClear()
-        room_type = intent.getIntExtra("room_type",-1)
-        val room_picture = intent.getIntExtra("room_image", -1)
-        room_id = intent.getStringExtra("room_id").toString()
-        room_name = intent.getStringExtra("room_name").toString()
+        roomType = intent.getStringExtra("room_type").toString()
+        val roomPicture = intent.getStringExtra("room_image").toString()
+        roomId = intent.getStringExtra("room_id").toString()
+        roomName = intent.getStringExtra("room_name").toString()
 
-        Glide.with(this)
-            .load(room_picture)
-            .into(binding.headerImage)
+      binding.headerImage.setImageDrawable(ContextCompat.getDrawable(this@RoomSettingsActivity, GlobalFun.getImage(roomPicture)))
 
         with(binding) {
 
-            roomTitle.text = room_name
+            roomTitle.text = roomName
             intent.getStringExtra("room_name")
-            var type_categorie: Category? = null
-                when(room_type){
-                    R.drawable.room_type_classic_ico ->{roomImage.setImageResource(room_type)}
-
-                    R.drawable.room_type_kitchen_ico ->{
-                    type_categorie = Category("Kitchen", room_type, createDevList("kitchen"))
-                    roomImage.setImageResource(room_type)
+            val roomTypeIcon = GlobalFun.getTypeIcon(roomType)
+            roomImage.setImageDrawable(ContextCompat.getDrawable(this@RoomSettingsActivity, roomTypeIcon))
+                var typeCategory: Category? = null
+                when(roomType){
+                    "Kitchen" ->{
+                    typeCategory = Category(roomType, roomTypeIcon, createDevList(roomType))
                 }
-                    R.drawable.room_type_bathroom_ico ->{
-                    type_categorie = Category("Bathroom", room_type, createDevList("bathroom"))
-                    roomImage.setImageResource(room_type)
+                    "Bathroom" ->{
+                    typeCategory = Category(roomType, roomTypeIcon, createDevList(roomType))
                 }
             }
 
             val categories = mutableListOf(
-                Category("Lighting", R.drawable.category_sun_ico, createDevList("light")),
-                Category("Climate", R.drawable.category_temp_ico,createDevList("climate")),
-                Category("Energy", R.drawable.category_lightning_ico,createDevList("energy")),
-                Category("Security", R.drawable.category_security_ico,createDevList("security")),
-                Category("Entertainment",R.drawable.category_tv_ico,createDevList("entertainment")),
-                Category("Other", R.drawable.category_other_ico,createDevList("other"))
+                Category("Lighting", R.drawable.category_sun_ico, createDevList("Lighting")),
+                Category("Climate", R.drawable.category_temp_ico, createDevList("Climate")),
+                Category("Energy", R.drawable.category_lightning_ico, createDevList("Energy")),
+                Category("Security", R.drawable.category_security_ico, createDevList("Security")),
+                Category("Entertainment",R.drawable.category_tv_ico, createDevList("Entertainment")),
+                Category("Other", R.drawable.category_other_ico, createDevList("Other"))
             )
 
-            if (type_categorie!=null){
-                categories.add(0,type_categorie)
+            if (typeCategory!=null){
+                categories.add(0,typeCategory)
             }
 
 
@@ -112,12 +89,16 @@ class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
 
             roomDevicesRV = roomDevicesRecyclerView
             val roomDevices = mutableListOf<Device>()
+
             GlobalObj.db.collection("devices")
-                .whereEqualTo("room_id", room_id)
+                .whereEqualTo("room_id", roomId)
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        roomDevices.add(Device(document["device_name"].toString(), document["device_icon"].toString().toInt()))
+                        val id = document["device_id"].toString()
+                        val name = document["device_name"].toString()
+                        val category = document["device_category"].toString()
+                        roomDevices.add(Device(id,name + " ${Device.getNextId(name)}", category))
                     }
                     roomAdapter = RoomAdapter(roomDevices, this@RoomSettingsActivity)
                     roomDevicesRV.layoutManager = GridLayoutManager(this@RoomSettingsActivity, 4)
@@ -129,124 +110,114 @@ class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
                 }
 
 
+            backBtn.setOnClickListener {
+                onBackPressedCallback.handleOnBackPressed()
+            }
 
+            cancelBtn.setOnClickListener {
+                GlobalFun.deleteRoom(roomId) {
+                        val intent = Intent(this@RoomSettingsActivity, BaseActivity::class.java)
+                        val animator = ActivityOptions.makeCustomAnimation(this@RoomSettingsActivity,
+                            R.anim.slide_in_left, R.anim.stay).toBundle()
+                        startActivity(intent,animator)
+                        finish()
+                    }
+            }
 
             roomCollapseButton.setOnClickListener {
-
-
 
                 //val uniqueDeviceNames = HashSet<String>()
 
                 roomAdapter.roomDevices.forEach {
-                    val device_name = it.name.substringBeforeLast(" ")
-                  //  val count = it.name.substringAfterLast(" ").toInt()
-
-               //     if (uniqueDeviceNames.add(device_name)) {
-                        val device_id = UUID.randomUUID().toString()
                         val device = hashMapOf(
-                            "device_id" to device_id,
-                            "room_id" to room_id,
-                            "device_name" to device_name,
-                            "device_icon" to it.icon
-                           // "count" to count
+                            "device_id" to it.id,
+                            "room_id" to roomId,
+                            "device_name" to it.name.substringBeforeLast(" "),
+                            "device_category" to it.category
                         )
                         GlobalObj.db.collection("devices").add(device)
-               //     }
                 }
 
                 val intent = Intent(this@RoomSettingsActivity, BaseActivity::class.java)
                 startActivity(intent)
             }
 
-
-//            roomHeader.setOnClickListener{
-//                if(roomAdapter.itemCount != 0) {
-//                    if (roomDevicesRV.visibility == View.VISIBLE) {
-//                        roomDevicesRV.visibility = View.GONE
-//                        roomCollapseButton.setImageResource(R.drawable.arrow_down)
-//                    } else {
-//                        roomDevicesRV.visibility = View.VISIBLE
-//                        roomCollapseButton.setImageResource(R.drawable.arrow_up)
-//                    }
-//                }
-//                roomCollapseButton.performClick()
-//            }
         }
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
 
 
-    private fun createDevList(name: String): MutableList<Device> {
-        val devicesList = mutableListOf<Device>()
+    private fun createDevList(name: String): MutableList<ConnectDevice> {
+        val devicesList = mutableListOf<ConnectDevice>()
         when(name){
-            "light" -> {
+            "Lighting" -> {
                 devicesList.addAll(mutableListOf(
-                    Device("Desktop lamp", R.drawable.new_lamp_desk_ico),
-                    Device("Chandelier",R.drawable.new_chandelier_ico),
-                    Device("Bulb",R.drawable.new_bulb_ico),
-                    Device("Spotlight", R.drawable.new_spotlight_ico)
+                    ConnectDevice("Desktop lamp", R.drawable.new_lamp_desk_ico, name),
+                    ConnectDevice("Chandelier",R.drawable.new_chandelier_ico, name),
+                    ConnectDevice("Bulb",R.drawable.new_bulb_ico, name),
+                    ConnectDevice("Spotlight", R.drawable.new_spotlight_ico, name)
                     )
                 )
             }
-            "climate" ->{
+            "Climate" ->{
                 devicesList.addAll(mutableListOf(
-                    Device("Radiator",R.drawable.new_radiator_ico),
-                    Device("Cooling system", R.drawable.new_conditioner_ico),
-                    Device("Heating floor", R.drawable.new_heating_floor_ico),
-                    Device("Ceiling fan",R.drawable.new_ceiling_fan_ico),
-                    Device("Desktop fan",R.drawable.new_desk_fan_ico),
-                    Device("Thermo regulator",R.drawable.new_thermostat_ico),
-                    Device("Humidifier", R.drawable.new_humidifier_ico)
+                    ConnectDevice("Radiator",R.drawable.new_radiator_ico, name),
+                    ConnectDevice("Cooling system", R.drawable.new_conditioner_ico, name),
+                    ConnectDevice("Heating floor", R.drawable.new_heating_floor_ico, name),
+                    ConnectDevice("Ceiling fan",R.drawable.new_ceiling_fan_ico, name),
+                    ConnectDevice("Desktop fan",R.drawable.new_desk_fan_ico, name),
+                    ConnectDevice("Thermo regulator",R.drawable.new_thermostat_ico, name),
+                    ConnectDevice("Humidifier", R.drawable.new_humidifier_ico, name)
                     )
                 )
             }
-            "energy" -> {
+            "Energy" -> {
                 devicesList.addAll(mutableListOf(
-                    Device("Switch",R.drawable.new_switch_ico),
-                    Device("Plug", R.drawable.new_plug_ico),
-                    Device("Socket", R.drawable.new_socket_ico),
+                    ConnectDevice("Switch",R.drawable.new_switch_ico, name),
+                    ConnectDevice("Plug", R.drawable.new_plug_ico, name),
+                    ConnectDevice("Socket", R.drawable.new_socket_ico, name),
                     )
                 )
             }
             "entertainment" -> {
                 devicesList.addAll(mutableListOf(
-                    Device("TV",R.drawable.new_tv_ico),
-                    Device("Radio", R.drawable.new_radio_ico),
-                    Device("Speaker", R.drawable.new_speaker_ico),
-                    Device("Projector",R.drawable.new_projector_ico),
+                    ConnectDevice("TV",R.drawable.new_tv_ico, name),
+                    ConnectDevice("Radio", R.drawable.new_radio_ico, name),
+                    ConnectDevice("Speaker", R.drawable.new_speaker_ico, name),
+                    ConnectDevice("Projector",R.drawable.new_projector_ico, name),
                     )
                 )
             }
             "security" -> {
                 devicesList.addAll(mutableListOf(
-                    Device("Camera",R.drawable.new_videocamera_ico),
-                    Device("Lock", R.drawable.new_lock_ico),
+                    ConnectDevice("Camera",R.drawable.new_videocamera_ico, name),
+                    ConnectDevice("Lock", R.drawable.new_lock_ico, name),
                     )
                 )
             }
-            "kitchen" ->{
+            "Kitchen" ->{
                 devicesList.addAll(mutableListOf(
-                    Device("Fridge",R.drawable.new_fridge_ico),
-                    Device("Coffee machine", R.drawable.new_coffee_machine_ico),
-                    Device("Stove",R.drawable.new_stove_ico),
+                    ConnectDevice("Fridge",R.drawable.new_fridge_ico, name),
+                    ConnectDevice("Coffee machine", R.drawable.new_coffee_machine_ico, name),
+                    ConnectDevice("Stove",R.drawable.new_stove_ico, name),
                     )
                 )
             }
-            "bathroom" ->{
+            "Bathroom" ->{
                 devicesList.addAll(mutableListOf(
-                    Device("Washing machine",R.drawable.new_washing_machine_ico),
-                    Device("Tap", R.drawable.new_tap_ico),
-                    Device("Shower", R.drawable.new_shower_ico)
+                    ConnectDevice("Washing machine",R.drawable.new_washing_machine_ico, name),
+                    ConnectDevice("Tap", R.drawable.new_tap_ico, name),
+                    ConnectDevice("Shower", R.drawable.new_shower_ico, name)
                     )
                 )
             }
             "other" -> {
                 devicesList.addAll(mutableListOf(
-                    Device("Wi-Fi",R.drawable.new_wi_fi_ico),
-                    Device("Moped", R.drawable.new_moped_ico),
-                    Device("Scooter", R.drawable.new_scooter_ico),
-                    Device("Printer", R.drawable.new_printer_ico)
+                    ConnectDevice("Wi-Fi",R.drawable.new_wi_fi_ico, name),
+                    ConnectDevice("Moped", R.drawable.new_moped_ico, name),
+                    ConnectDevice("Scooter", R.drawable.new_scooter_ico, name),
+                    ConnectDevice("Printer", R.drawable.new_printer_ico, name)
                     )
                 )
             }
@@ -269,8 +240,9 @@ class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
                 true
             }
             DragEvent.ACTION_DROP ->{
-                val item = event.clipData.getItemAt(0)
-                deviceWithIcon(item.text.toString().toInt())
+                val name = event.clipData.getItemAt(0).toString()
+                val category = event.clipData.getItemAt(1).toString()
+                addDevice(name, category)
                 true
             }
             DragEvent.ACTION_DRAG_ENDED ->{
@@ -281,47 +253,47 @@ class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
         }
     }
 
-    private fun deviceWithIcon(devIcon: Int){
-        when(devIcon){
-            R.drawable.new_bulb_ico -> addDevice("Bulb" ,devIcon)
-            R.drawable.new_chandelier_ico -> addDevice("Chandelier",devIcon)
-            R.drawable.new_lamp_desk_ico -> addDevice("Desktop lamp", devIcon)
-            R.drawable.new_spotlight_ico -> addDevice("Spotlight", devIcon)
-
-            R.drawable.new_radiator_ico -> addDevice("Radiator",devIcon)
-            R.drawable.new_conditioner_ico -> addDevice("Cooling system",devIcon)
-            R.drawable.new_heating_floor_ico -> addDevice("Heating floor",devIcon)
-            R.drawable.new_ceiling_fan_ico -> addDevice("Ceiling fan",devIcon)
-            R.drawable.new_desk_fan_ico -> addDevice("Desktop fan",devIcon)
-            R.drawable.new_thermostat_ico -> addDevice("Thermo regulator", devIcon)
-            R.drawable.new_humidifier_ico -> addDevice("Humidifier",devIcon)
-
-            R.drawable.new_switch_ico -> addDevice("Switch",devIcon)
-            R.drawable.new_plug_ico -> addDevice("Plug", devIcon)
-            R.drawable.new_socket_ico-> addDevice("Socket", devIcon)
-
-            R.drawable.new_tv_ico -> addDevice("TV",devIcon)
-            R.drawable.new_radio_ico -> addDevice("Radio", devIcon)
-            R.drawable.new_speaker_ico -> addDevice("Speaker", devIcon)
-            R.drawable.new_projector_ico -> Device("Projector",devIcon)
-
-            R.drawable.new_videocamera_ico -> addDevice("Camera",devIcon)
-            R.drawable.new_lock_ico -> addDevice("Lock",devIcon)
-
-            R.drawable.new_fridge_ico -> addDevice("Fridge",devIcon)
-            R.drawable.new_coffee_machine_ico -> addDevice("Coffee machine",devIcon)
-            R.drawable.new_stove_ico -> addDevice("Stove",devIcon)
-
-            R.drawable.new_washing_machine_ico -> addDevice("Washing machine",devIcon)
-            R.drawable.new_tap_ico -> addDevice("Tap", devIcon)
-            R.drawable.new_shower_ico -> addDevice("Shower", devIcon)
-
-            R.drawable.new_wi_fi_ico -> addDevice("Wi-Fi",devIcon)
-            R.drawable.new_moped_ico -> addDevice("Moped", devIcon)
-            R.drawable.new_scooter_ico -> addDevice("Scooter", devIcon)
-            R.drawable.new_printer_ico -> addDevice("Printer", devIcon)
-        }
-    }
+//    private fun deviceWithIcon(devIcon: Int){
+//        when(devIcon){
+//            R.drawable.new_bulb_ico -> addDevice("Bulb", devIcon, )
+//            R.drawable.new_chandelier_ico -> addDevice("Chandelier",devIcon)
+//            R.drawable.new_lamp_desk_ico -> addDevice("Desktop lamp", devIcon)
+//            R.drawable.new_spotlight_ico -> addDevice("Spotlight", devIcon)
+//
+//            R.drawable.new_radiator_ico -> addDevice("Radiator",devIcon)
+//            R.drawable.new_conditioner_ico -> addDevice("Cooling system",devIcon)
+//            R.drawable.new_heating_floor_ico -> addDevice("Heating floor",devIcon)
+//            R.drawable.new_ceiling_fan_ico -> addDevice("Ceiling fan",devIcon)
+//            R.drawable.new_desk_fan_ico -> addDevice("Desktop fan",devIcon)
+//            R.drawable.new_thermostat_ico -> addDevice("Thermo regulator", devIcon)
+//            R.drawable.new_humidifier_ico -> addDevice("Humidifier",devIcon)
+//
+//            R.drawable.new_switch_ico -> addDevice("Switch",devIcon)
+//            R.drawable.new_plug_ico -> addDevice("Plug", devIcon)
+//            R.drawable.new_socket_ico-> addDevice("Socket", devIcon)
+//
+//            R.drawable.new_tv_ico -> addDevice("TV",devIcon)
+//            R.drawable.new_radio_ico -> addDevice("Radio", devIcon)
+//            R.drawable.new_speaker_ico -> addDevice("Speaker", devIcon)
+//            R.drawable.new_projector_ico -> addDevice("Projector",devIcon)
+//
+//            R.drawable.new_videocamera_ico -> addDevice("Camera",devIcon)
+//            R.drawable.new_lock_ico -> addDevice("Lock",devIcon)
+//
+//            R.drawable.new_fridge_ico -> addDevice("Fridge",devIcon)
+//            R.drawable.new_coffee_machine_ico -> addDevice("Coffee machine",devIcon)
+//            R.drawable.new_stove_ico -> addDevice("Stove",devIcon)
+//
+//            R.drawable.new_washing_machine_ico -> addDevice("Washing machine",devIcon)
+//            R.drawable.new_tap_ico -> addDevice("Tap", devIcon)
+//            R.drawable.new_shower_ico -> addDevice("Shower", devIcon)
+//
+//            R.drawable.new_wi_fi_ico -> addDevice("Wi-Fi",devIcon)
+//            R.drawable.new_moped_ico -> addDevice("Moped", devIcon)
+//            R.drawable.new_scooter_ico -> addDevice("Scooter", devIcon)
+//            R.drawable.new_printer_ico -> addDevice("Printer", devIcon)
+//        }
+//    }
 
     override fun addIndent() {
         if (roomAdapter.itemCount == 1){
@@ -336,26 +308,31 @@ class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
         startActivity(intent)
     }
 
-    override fun addDevice(name: String,icon: Int) {
-       // connect()
+    override fun addDevice(name: String, category: String) {
+       connect()
         if(roomAdapter.itemCount == 0){
             val textView = findViewById<TextView>(R.id.drag_device_text)
             textView.visibility = View.GONE
             val button = findViewById<ImageButton>(R.id.room_collapse_button)
             button.visibility = View.VISIBLE
         }
-
-        roomAdapter.addNewDeviceToRoom(Device(name + " ${Device.getNextId(icon)}", icon), 0)
-
+        val deviceId = UUID.randomUUID().toString()
+        roomAdapter.addNewDeviceToRoom(Device(deviceId,name + " ${Device.getNextId(name)}", category), 0)
     }
 
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val intent = Intent(this@RoomSettingsActivity, CreateRoomActivity::class.java)
-            intent.putExtra("room_id", room_id)
-            intent.putExtra("room_name", room_name)
-            intent.putExtra("room_type", room_type)
-            startActivity(intent)
+
+            val animationBundle = ActivityOptions.makeCustomAnimation(
+                this@RoomSettingsActivity,
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            ).toBundle()
+            intent.putExtra("room_id", roomId)
+            intent.putExtra("room_name", roomName)
+            intent.putExtra("room_type", roomType)
+            startActivity(intent, animationBundle)
         }
     }
 
@@ -365,7 +342,7 @@ class RoomSettingsActivity : AppCompatActivity(),DeviceConnection {
 class CategoryAdapter(private val categories: MutableList<Category>, private val listener: DeviceConnection) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_category, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.rv_item_category, parent, false)
         return CategoryViewHolder(view)
     }
 
@@ -388,7 +365,7 @@ class CategoryAdapter(private val categories: MutableList<Category>, private val
 
 
             categoryName.text = category.name
-            image.setImageResource(category.icon)
+            image.setImageDrawable(ContextCompat.getDrawable(itemView.context, category.icon))
             val deviceAdapter = DeviceAdapter(category.devices,listener)
             devicesRecyclerView.layoutManager = GridLayoutManager(itemView.context, 4)
             devicesRecyclerView.adapter = deviceAdapter
@@ -397,11 +374,11 @@ class CategoryAdapter(private val categories: MutableList<Category>, private val
             collapse.setOnClickListener{
                 if(devicesRecyclerView.visibility == View.GONE) {
                     devicesRecyclerView.visibility = View.VISIBLE
-                    collapse.setImageResource(R.drawable.arrow_up)
+                    collapse.setImageDrawable(ContextCompat.getDrawable(itemView.context ,R.drawable.arrow_up))
                 }
                 else {
                     devicesRecyclerView.visibility = View.GONE
-                    collapse.setImageResource(R.drawable.arrow_down)
+                    collapse.setImageDrawable(ContextCompat.getDrawable(itemView.context ,R.drawable.arrow_down))
                 }
             }
             itemView.setOnClickListener{
@@ -416,7 +393,7 @@ class CategoryAdapter(private val categories: MutableList<Category>, private val
 class RoomAdapter(val roomDevices: MutableList<Device>, val listener: DeviceConnection) : RecyclerView.Adapter<RoomAdapter.RoomViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_device, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.rv_item_room_device, parent, false)
         return RoomViewHolder(view)
     }
 
@@ -437,40 +414,42 @@ class RoomAdapter(val roomDevices: MutableList<Device>, val listener: DeviceConn
         fun bind(device: Device) {
             deviceName.text = device.name
 
-            Glide.with(itemView.context)
-                .load(device.icon)
-                .into(deviceImageView)
+            deviceImageView.setImageDrawable(ContextCompat.getDrawable(itemView.context, GlobalFun.iconDevice(device.name.substringBeforeLast(" "))))
 
 
-            itemView.setOnLongClickListener{
-
-                Device.getLastId(device.icon)
-                if(roomDevices.size == 1) {
-                    listener.addIndent()
-                }
-                else
-                {
-                    roomDevices.subList(0,bindingAdapterPosition).forEachIndexed{index,dev->
-                        if(dev.icon == device.icon){
-                            dev.name= "${dev.name.substringBeforeLast(" ")} ${dev.name.substringAfterLast(" ").toInt() - 1}"
-                            notifyItemChanged(index)
+            itemView.setOnClickListener{
+                val text = ContextCompat.getString(itemView.context, R.string.dialog_delete_device_text) + " \"${device.name}\" ?"
+                GlobalFun.dialogDelete(itemView.context as Activity, text) {delete->
+                    if(delete) {
+                        Device.getLastId(device.name)
+                        if (roomDevices.size == 1) {
+                            listener.addIndent()
+                        } else {
+                            roomDevices.subList(0, bindingAdapterPosition)
+                                .forEachIndexed { index, dev ->
+                                    if (dev.category == device.category) {
+                                        dev.name = "${dev.name.substringBeforeLast(" ")} ${
+                                            dev.name.substringAfterLast(" ").toInt() - 1
+                                        }"
+                                        notifyItemChanged(index)
+                                    }
+                                }
                         }
+
+                        roomDevices.removeAt(bindingAdapterPosition)
+                        notifyItemRemoved(bindingAdapterPosition)
                     }
                 }
 
-                roomDevices.removeAt(bindingAdapterPosition)
-                notifyItemRemoved(bindingAdapterPosition)
-
-                true
             }
         }
 
     }
 }
-class DeviceAdapter(private val devices: MutableList<Device>, private val listener: DeviceConnection) : RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
+class DeviceAdapter(private val devices: MutableList<ConnectDevice>, private val listener: DeviceConnection) : RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_device, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.rv_item_device, parent, false)
         return DeviceViewHolder(view)
     }
 
@@ -485,24 +464,24 @@ class DeviceAdapter(private val devices: MutableList<Device>, private val listen
     inner class DeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val deviceName: TextView = itemView.findViewById(R.id.deviceName)
         private val deviceImageView: ImageView = itemView.findViewById(R.id.deviceImageView)
-        fun bind(device: Device) {
+        fun bind(device: ConnectDevice) {
             deviceName.text = device.name
 
-            Glide.with(itemView.context)
-                .load(device.icon)
-                .into(deviceImageView)
+         deviceImageView.setImageDrawable(ContextCompat.getDrawable(itemView.context, device.icon))
 
             itemView.setOnClickListener {
-                listener.addDevice(device.name, device.icon)
+                listener.addDevice(device.name, device.category)
             }
 
             itemView.setOnLongClickListener {
-                val cliptext = device.icon.toString()
-                val item = ClipData.Item(cliptext)
-                val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
-                val data = ClipData(cliptext,mimeTypes, item)
 
-                // addNewDev(getDevice(device.icon))
+                val mimeTypes = arrayOf(ClipDescription.MIMETYPE_TEXT_PLAIN)
+                val item1 = ClipData.Item(device.name)
+                val item2 = ClipData.Item(device.category)
+
+                val data = ClipData(device.name, mimeTypes, item1)
+                data.addItem(item2)
+
                 val dragShadowBuilder = View.DragShadowBuilder(it)
                 it.startDragAndDrop(data,dragShadowBuilder,it,0)
                 true
@@ -515,8 +494,7 @@ class DeviceAdapter(private val devices: MutableList<Device>, private val listen
 
 }
 
-
 interface DeviceConnection {
-    fun addDevice(name: String,icon: Int)
+    fun addDevice(name: String,category: String)
     fun addIndent()
 }

@@ -1,15 +1,11 @@
 package application.mobile.smarthouse.ui.home
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ActivityOptions
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -19,30 +15,23 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import androidx.appcompat.view.menu.MenuView.ItemView
-import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import application.mobile.smarthouse.BaseActivity
 import application.mobile.smarthouse.CreateRoomActivity
-import application.mobile.smarthouse.GlobalObj
+import application.mobile.smarthouse.GlobalFun
 import application.mobile.smarthouse.R
 import application.mobile.smarthouse.RoomActivity
-import application.mobile.smarthouse.RoomSettingsActivity
 import application.mobile.smarthouse.UserInfo
-import application.mobile.smarthouse.databinding.ActivityRoomBinding
 import application.mobile.smarthouse.databinding.FragmentHomeBinding
-import com.bumptech.glide.Glide
 import java.util.Collections
-import kotlin.random.Random
 
-data class Room(val id: String, var name: String, var image: Int, var typeIcon: Int, var isAnimated: Boolean)
+data class Room(val id: String, var name: String, var image: String, var type: String, var isAnimated: Boolean)
 class HomeFragment : Fragment(), MenuProvider, OnStartDragListener {
 
     private var _binding: FragmentHomeBinding? = null
@@ -53,20 +42,25 @@ class HomeFragment : Fragment(), MenuProvider, OnStartDragListener {
     private lateinit var roomsAdapter: RoomsAdapter
 
 
+
     private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        BaseActivity.setHomeTitle()
+
+            val title = activity?.findViewById<TextView>(R.id.toolbar_title)
+
+            title?.text = UserInfo.selected_home_name
+
+
 
         activity?.addMenuProvider(this@HomeFragment,viewLifecycleOwner, Lifecycle.State.RESUMED)
 
         val orderedRoomIds = viewModel.loadRoomsOrderFromSharedPreferences()
 
-        viewModel.getRooms(UserInfo.selected_home).observe(viewLifecycleOwner) { rooms ->
+        viewModel.getRooms(UserInfo.selected_home_id).observe(viewLifecycleOwner) { rooms ->
 
             val orderedRooms = mutableListOf<Room>()
 
@@ -76,6 +70,10 @@ class HomeFragment : Fragment(), MenuProvider, OnStartDragListener {
 
             val newRooms = rooms.filter { room ->
                 orderedRooms.none { it.id == room.id }
+            }
+
+            binding.emptyRoomListText.setOnClickListener {
+                addRoom()
             }
 
             orderedRooms.addAll(0, newRooms)
@@ -93,7 +91,6 @@ class HomeFragment : Fragment(), MenuProvider, OnStartDragListener {
                 binding.emptyRoomListText.visibility = View.VISIBLE
 
         }
-
         return root
     }
 
@@ -102,83 +99,101 @@ class HomeFragment : Fragment(), MenuProvider, OnStartDragListener {
     }
     override fun onResume() {
         super.onResume()
-        try {
-            val displayMetrics = requireContext().resources.displayMetrics
-            val screenHeight = displayMetrics.heightPixels
-            roomsAdapter.rooms.forEach { room ->
-                if (room.isAnimated) {
-                    val viewHolder = binding.roomsRecycleView.findViewHolderForAdapterPosition(
-                        roomsAdapter.rooms.indexOf(room)
-                    )
-                    viewHolder?.let {
-                        room.isAnimated = false
-                        val animator = ObjectAnimator.ofFloat(it.itemView, "translationY", -screenHeight.toFloat(),  0f)
-                        animator.duration = 500
-                        animator.start()
-
-                    }
-
-                }
-            }
-        }catch(_: Exception) {}
+//        try {
+//            val displayMetrics = requireContext().resources.displayMetrics
+//            val screenHeight = displayMetrics.heightPixels
+//            roomsAdapter.rooms.forEach { room ->
+//                if (room.isAnimated) {
+//                    val viewHolder = binding.roomsRecycleView.findViewHolderForAdapterPosition(
+//                        roomsAdapter.rooms.indexOf(room)
+//                    )
+//                    viewHolder?.let {
+//                        room.isAnimated = false
+//                        it.itemView.y = -screenHeight.toFloat()
+//                        val animator = ValueAnimator.ofFloat(it.itemView.y, 0f)
+//                        animator.duration = 600
+//                        room.isAnimated = true
+//
+//
+//                        animator.addUpdateListener { animation ->
+//                            it.itemView.y = (animation.animatedValue as Float)
+//                        }
+//                        animator.start()
+//
+//                    }
+//
+//                }
+//            }
+//        }catch(_: Exception) {}
     }
     @SuppressLint("ObjectAnimatorBinding")
     override fun goToRoom(roomItem: View, room: Room) {
         val intent = Intent(context, RoomActivity::class.java)
-        intent.putExtra("room_picture", room.image)
+        intent.putExtra("room_image", room.image)
         intent.putExtra("room_name", room.name)
-        intent.putExtra("room_type", room.typeIcon)
+        intent.putExtra("room_type", room.type)
         intent.putExtra("room_id", room.id)
-        val screenHeight = requireContext().resources.displayMetrics.heightPixels
-        val animator = ValueAnimator.ofFloat(roomItem.y, -screenHeight.toFloat())
-        animator.duration = 600
-        room.isAnimated = true
+//            val screenHeight = requireContext().resources.displayMetrics.heightPixels
+//        val animator = ValueAnimator.ofFloat(roomItem.y, -screenHeight.toFloat())
+//        animator.duration = 600
+//        room.isAnimated = true
+//
+//
+//        animator.addUpdateListener { animation ->
+//            roomItem.y = (animation.animatedValue as Float)
+//        }
+//
+//        animator.addListener(object : AnimatorListenerAdapter() {
+//
+//            override fun onAnimationEnd(animation: Animator) {
+//
+//            }
+//        })
+//
+//        animator.start()
+//
+//        Handler(Looper.getMainLooper()).postDelayed({
+//            val options = ActivityOptions.makeCustomAnimation(requireActivity(), 0, 0)
+//            startActivity(intent, options.toBundle())
+//        }, 450)
 
-
-        animator.addUpdateListener { animation ->
-            roomItem.y = (animation.animatedValue as Float)
-        }
-
-        animator.addListener(object : AnimatorListenerAdapter() {
-
-            override fun onAnimationEnd(animation: Animator) {
-
-            }
-        })
-
-        animator.start()
-
-        Handler(Looper.getMainLooper()).postDelayed({
-            val options = ActivityOptions.makeCustomAnimation(requireActivity(), 0, 0)
-            startActivity(intent, options.toBundle())
-        }, 450)
-
-        //val intent = Intent(context, RoomActivity::class.java)
-
-      //  startActivity(intent)
+        val animator = ActivityOptions.makeCustomAnimation(context, R.anim.slide_in_up,R.anim.stay)
+        startActivity(intent, animator.toBundle())
     }
 
 
+
+    override fun showZeroText() {
+        binding.emptyRoomListText.visibility = View.GONE
+    }
+
+
+
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.home_menu, menu)
+        menuInflater.inflate(R.menu.home_page_menu, menu)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
             R.id.addRoom -> {
-                val intent = Intent(requireContext(), CreateRoomActivity::class.java)
-                intent.putExtra("home_id", UserInfo.selected_home)
-                startActivity(intent)
-                true
-            }
-
-            R.id.editRoom -> {
+                addRoom()
                 true
             }
 
             else -> false
         }
 
+    }
+
+    private fun addRoom(){
+        val intent = Intent(requireContext(), CreateRoomActivity::class.java)
+        intent.putExtra("home_id", UserInfo.selected_home_id)
+        val animationBundle = ActivityOptions.makeCustomAnimation(
+            context,
+            R.anim.slide_in_right,
+            R.anim.slide_out_left
+        ).toBundle()
+        startActivity(intent, animationBundle)
     }
 
     override fun onDestroyView() {
@@ -196,7 +211,7 @@ class HomeFragment : Fragment(), MenuProvider, OnStartDragListener {
 class RoomsAdapter(val rooms: MutableList<Room>, private val listener: OnStartDragListener) : RecyclerView.Adapter<RoomsAdapter.RoomsViewHolder>(), ItemMoveCallback.ItemTouchHelperAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_room, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.rv_item_room, parent, false)
         return RoomsViewHolder(view)
     }
 
@@ -228,17 +243,12 @@ class RoomsAdapter(val rooms: MutableList<Room>, private val listener: OnStartDr
         fun bind(room: Room) {
 
 
-            Glide.with(itemView.context)
-                .load(room.image)
-                .into(roomImageView)
+            roomImageView.setImageDrawable(ContextCompat.getDrawable(itemView.context,GlobalFun.getImage(room.image)))
 
-            Glide.with(itemView.context)
-                .load(room.typeIcon)
-                .into(roomTypeIcon)
+            roomTypeIcon.setImageDrawable(ContextCompat.getDrawable(itemView.context,GlobalFun.getTypeIcon(room.type)))
             roomName.text = room.name
 
             itemView.setOnClickListener {
-                itemView.bringToFront()
                 listener.goToRoom(it, room)
             }
 
@@ -249,80 +259,54 @@ class RoomsAdapter(val rooms: MutableList<Room>, private val listener: OnStartDr
 
             otherButton.setOnClickListener {view ->
 
-                val popup = PopupMenu(view.context, view)
+                val popup = PopupMenu(view.context, view, Gravity.END)
                 MenuInflater(view.context).inflate(R.menu.room_menu, popup.menu)
-
                 popup.setOnMenuItemClickListener { menuItem ->
                     when (menuItem.itemId) {
 
                         R.id.changePicture -> {
 
-                            var  image: Int
+                            var  image = room.image
                             do {
-                               image = randomImage(room.typeIcon)
+                               image = GlobalFun.randomImage(room.type)
                             }
                             while(image==room.image)
 
-                            room.image = image
 
-
-                            val reference = GlobalObj.db.collection("rooms")
-                            var docId: String? = null
-                            reference.whereEqualTo("room_id", room.id)
-                                .get()
-                                .addOnSuccessListener {
-                                    for(document in it) {
-                                        docId = document.id
+                            GlobalFun.updateRoomImage(room.id, image) {
+                                room.image = image
+                                notifyItemChanged(bindingAdapterPosition)
+                            }
+                            true
+                        }
+                        R.id.renameRoom -> {
+                            val text = ContextCompat.getString(itemView.context,R.string.dialog_rename_room_text)
+                            GlobalFun.renameItem(itemView.context as Activity, room.name, text){ newName ->
+                                if(newName != room.name){
+                                    GlobalFun.updateRoomName(room.id, newName){
+                                        room.name = newName
+                                        notifyItemChanged(bindingAdapterPosition)
                                     }
-                                    val updates = hashMapOf<String, Any>(
-                                        "room_image" to room.image
-                                    )
-                                    if(docId!=null) {
-                                        reference.document(docId!!)
-                                            .update(updates)
-                                            .addOnCompleteListener {
-                                                notifyItemChanged(bindingAdapterPosition)
-                                            }
-                                    }
-
                                 }
+                            }
                             true
                         }
-                        R.id.editRoom -> {
 
-                            true
-                        }
                         R.id.deleteRoom -> {
-                            var reference = GlobalObj.db.collection("devices")
-                            var docId: String? = null
-                            reference.whereEqualTo("room_id", room.id)
-                                .get()
-                                .addOnSuccessListener {
-                                    for (document in it) {
-                                        docId = document.id
-                                    }
-                                    if (docId != null) {
-                                        reference.document(docId!!).delete()
-                                    }
-                                    reference = GlobalObj.db.collection("rooms")
-
-                                    reference.whereEqualTo("room_id", room.id)
-                                        .get()
-                                        .addOnSuccessListener {
-                                            for (document in it) {
-                                                docId = document.id
-                                            }
-
-                                            if (docId != null) {
-                                                reference.document(docId!!).delete()
-                                            }
+                            val text = ContextCompat.getString(itemView.context, R.string.dialog_delete_room_text) + " \"${room.name}\" ?"
+                            GlobalFun.dialogDelete(itemView.context as Activity, text) {delete->
+                                if(delete) {
+                                    GlobalFun.deleteDevices(room.id)
+                                    GlobalFun.deleteRoom(room.id) {
+                                        val position = bindingAdapterPosition
+                                        rooms.removeAt(position)
+                                        notifyItemRemoved(position)
+                                        if (rooms.size == 0) {
+                                            listener.showZeroText()
                                         }
-                                    val position = bindingAdapterPosition
-                                    rooms.removeAt(position)
-                                    notifyItemRemoved(position)
+                                    }
                                 }
-
-
+                            }
                             true
                         }
 
@@ -345,39 +329,7 @@ class RoomsAdapter(val rooms: MutableList<Room>, private val listener: OnStartDr
 
             }
         }
-        private fun randomImage(icon: Int): Int{
 
-            val imagesArray = when (icon) {
-                R.drawable.room_type_classic_ico -> arrayOf(
-                    R.drawable.img_classic1,
-                    R.drawable.img_classic2,
-                    R.drawable.img_classic3,
-                    R.drawable.img_classic4
-                )
-
-                R.drawable.room_type_kitchen_ico -> arrayOf(
-                    R.drawable.img_kitchen1,
-                    R.drawable.img_kitchen2,
-                    R.drawable.img_kitchen3,
-                    R.drawable.img_kitchen4
-                )
-
-                R.drawable.room_type_bathroom_ico -> arrayOf(
-                    R.drawable.img_bathroom1,
-                    R.drawable.img_bathroom2,
-                    R.drawable.img_bathroom3,
-                    R.drawable.img_bathroom4
-                )
-
-                else -> emptyArray()
-            }
-
-            return if (imagesArray.isNotEmpty()) {
-                imagesArray[Random.nextInt(imagesArray.size)]
-            } else {
-                -1
-            }
-        }
 
     }
 
@@ -430,4 +382,6 @@ class ItemMoveCallback(private val adapter: RoomsAdapter) : ItemTouchHelper.Call
 interface OnStartDragListener {
     fun onStartDrag(viewHolder: RecyclerView.ViewHolder)
     fun goToRoom(roomItem: View, room: Room)
+    fun showZeroText()
+
 }

@@ -35,13 +35,27 @@
     <string name="profile">Profile</string>
     <string name="devices">Devices</string>
     <string name="create_room_btn">Create my room</string>
-    <string name="toolbar_edit_rooms_text">Edit room</string>
     <string name="toolbar_create_room_text">Create Room</string>
     <string name="press_plus_for_add_your_first_room">Press plus for add your first room</string>
     <string name="i_agree">I agree</string>
     <string name="please_agree_to_continue_using_the_app">Please agree to continue using the app</string>
 
+    //room_menu
+    <string name="context_menu_rename_room_text">Rename room</string>
+    <string name="context_menu_change_picture">Change picture</string>
+    <string name="context_menu_delete_room">Delete room</string>
 
-    <string name="change_picture">Change picture</string>
-    <string name="delete_room">Delete room</string>
+
+    <string name="ok_btn_text">OK</string>
+    <string name="cancel_btn_text">Cancel</string>
+
+    <string name="dialog_rename_room_text">Here you can change the room name. Enter the new name and click ‘OK’</string>
+    <string name="dialog_rename_home_text">Here you can change the home name. Enter the new name and click ‘OK’</string>
+    <string name="dialog_delete_device_text">Here you can delete this device. If you will delete this device, all connected devices of the same type will change their ordinal numbers. Are you sure you want to delete the </string>
+    <string name="dialog_delete_room_text">Here you can delete this room. Please note that all devices connected to this room will also be deleted, and you will need to reconnect them. This action cannot be undone. Are you sure you want to delete </string>
+    <string name="dialog_delete_home_text">Here you can delete this home. Please note that all rooms and their devices created within this home will also be permanently deleted. This action cannot be undone. Are you sure you want to delete </string>
+    <string name="context_menu_rename_home_text">Rename home</string>
+    <string name="context_menu_delete_home">Delete home</string>
+    <string name="your_new_name">Your new name...</string>
+    <string name="name_editor">Name Editor</string>
 </resources>

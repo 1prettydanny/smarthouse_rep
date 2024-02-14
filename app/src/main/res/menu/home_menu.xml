@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/addRoom"
+        android:id="@+id/renameHome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/toolbar_add_room_icon"
-        android:iconTint="@color/_333333"
-        android:title="@string/toolbar_create_room_text"
-        app:showAsAction="always" />
+        android:icon="@drawable/context_menu_rename_ico"
+        android:title="@string/context_menu_rename_home_text"
+        />
 
+    <item
+        android:id="@+id/deleteHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:icon="@drawable/context_menu_trash_ico"
+        android:title="@string/context_menu_delete_home"
+        />
 </menu>

@@ -1,26 +1,19 @@
 package application.mobile.smarthouse
 
 
-import android.content.Context
+import android.app.ActivityOptions
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
 import application.mobile.smarthouse.databinding.ActivityCreateHomeBinding
-import application.mobile.smarthouse.ui.home.HomeFragment
-import java.util.Timer
-import java.util.TimerTask
+import application.mobile.smarthouse.ui.Profile.ProfileFragment
 import java.util.UUID
 
 class CreateHomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateHomeBinding
-    val timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,111 +23,85 @@ class CreateHomeActivity : AppCompatActivity() {
         setContentView(binding.root)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
+        val textWatcher = GlobalFun.getTextWatcher(binding.homeNameInput,binding.homeErrorInput, this)
 
-        var myTask : TimerTask? =null
 
-
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
+            binding.cancelBtn.setOnClickListener {
+                    onBackPressedCallback.handleOnBackPressed()
             }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                try {
-                    if ( s!!.length < 3 || s!!.length>=25) {
-                        myTask?.cancel()
-
-                        myTask = object : TimerTask() {
-                            override fun run() {
-                                runOnUiThread {
-                                    if(s!!.length <= 3 )
-                                        binding.homeErrorInput.text = getString(R.string.short_home_name_error)
-                                    else
-                                        binding.homeErrorInput.text = getString(R.string.long_home_name_error)
-
-                                    binding.homeErrorInput.visibility = View.VISIBLE
-                                }
-                            }
-                        }
-                        timer.schedule(myTask, 1000)
-                    } else {
-                        myTask?.cancel()
-                        binding.homeErrorInput.visibility = View.INVISIBLE
-                        binding.errorInput.visibility = View.GONE
-                        binding.homeNameInput.background = ContextCompat.getDrawable(this@CreateHomeActivity,R.drawable.rounded_selected_edit_text)
-                    }
-                }catch (_:Exception){
-
-                }
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        }
-
-
-
 
         binding.homeNameInput.addTextChangedListener(textWatcher)
 
+        binding.agreeCheckbox.setOnClickListener {
+            binding.errorAgree.visibility = View.GONE
+        }
+
         binding.createHomeBtn.setOnClickListener{
 
-            val home_name: String = binding.homeNameInput.text.toString().trim()
+            val homeName: String = binding.homeNameInput.text.toString().trim()
 
-            if(home_name.length in 3..25 && !binding.agreeCheckbox.isActivated)
+            if(homeName.length in 3..25 && binding.agreeCheckbox.isChecked)
             {
-                uploadHomeToDatabase(home_name)
+                uploadHomeToDatabase(homeName)
             }
             else{
-                if(binding.agreeCheckbox.isActivated){
-                    binding.errorInput.visibility = View.VISIBLE
-                }
-                    if (home_name.length <= 3)
-                        binding.homeErrorInput.text = getString(R.string.short_home_name_error)
-                    else
-                        binding.homeErrorInput.text = getString(R.string.long_home_name_error)
+                if(!binding.agreeCheckbox.isChecked)
+                    binding.errorAgree.visibility = View.VISIBLE
+                if (homeName.length <= 3)
+                    binding.homeErrorInput.text = getString(R.string.short_home_name_error)
+                else
+                    binding.homeErrorInput.text = getString(R.string.long_home_name_error)
 
             }
 
         }
     }
 
-    private fun uploadHomeToDatabase(home_name: String){
-        val home_id = UUID.randomUUID().toString()
+    private fun uploadHomeToDatabase(homeName: String){
+        val homeId = UUID.randomUUID().toString()
 
         val home = hashMapOf(
-            "home_id" to home_id,
+            "home_id" to homeId,
             "user_id" to UserInfo.user_id,
-            "home_name" to home_name
+            "home_name" to homeName
         )
 
         GlobalObj.db.collection("homes").add(home)
 
-            UserInfo.selected_home = home_id
+                UserInfo.selected_home_id = homeId
+                UserInfo.selected_home_name = homeName
+                UserInfo.changeSelectedHome()
+                    val intent = Intent(this, BaseActivity::class.java)
+                    val anim = ActivityOptions.makeCustomAnimation(
+                        this,
+                        R.anim.slide_in_down,
+                        R.anim.slide_in_down
+                    )
+                    startActivity(intent, anim.toBundle())
 
-            val userReference = GlobalObj.db.collection("users").document(UserInfo.user_id)
-            userReference.update("selected_home", home_id)
-            .addOnCompleteListener {
-                UserInfo.selected_home = home_id
-                val intent = Intent(this, BaseActivity::class.java)
-                intent.putExtra("home_name", home_name)
-                // HomeFragment().arguments?.getString(home_name)
-                startActivity(intent)
-            }
     }
 
 
     override fun onDestroy() {
-        timer.cancel()
+        GlobalFun.stopTimer()
         super.onDestroy()
     }
 
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            val intent = Intent(Intent.ACTION_MAIN)
-            intent.addCategory(Intent.CATEGORY_HOME)
-            startActivity(intent)
+            if (UserInfo.selected_home_id =="") {
+                UserInfo.clearInfo()
+                GlobalObj.auth.signOut()
+                val intent = Intent(this@CreateHomeActivity, Starter::class.java)
+                val animator = ActivityOptions.makeCustomAnimation(this@CreateHomeActivity, R.anim.slide_in_down, R.anim.stay)
+                startActivity(intent, animator.toBundle())
+            }
+            else
+            {
+                val intent = Intent(this@CreateHomeActivity, BaseActivity::class.java)
+                val animator = ActivityOptions.makeCustomAnimation(this@CreateHomeActivity, R.anim.slide_in_up, R.anim.slide_out_up)
+                startActivity(intent, animator.toBundle())
+            }
         }
     }
 }

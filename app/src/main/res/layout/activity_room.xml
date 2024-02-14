@@ -7,26 +7,51 @@
     android:fillViewport="true"
     android:background="@drawable/page_gradient">
 
-    <LinearLayout
+
+
+    <RelativeLayout
         android:id="@+id/room_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-       >
+        android:layout_height="match_parent">
 
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/roomHeaderImage"
+            android:id="@+id/room_header_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             app:shapeAppearanceOverlay="@style/RoundedTopCorners"
             />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Room Manager"
+            android:layout_below="@id/room_header_image"
+            android:fontFamily="@font/font_high"
+            android:textStyle="bold"
+            android:layout_marginTop="7dp"
+            android:layout_marginStart="25dp"
+            android:textColor="@color/black"
+            android:textSize="9pt"/>
+
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:background="@drawable/cancel_ico"
+            android:layout_below="@id/room_header_image"
+            android:layout_marginTop="7.5dp"
+            android:layout_marginEnd="25dp"
+            android:layout_alignParentEnd="true"/>
+
 
         <androidx.cardview.widget.CardView
-            android:layout_width="365dp"
+            android:id="@+id/room_head"
+            android:layout_width="355dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/cancel_btn"
             android:elevation="0dp"
             app:cardCornerRadius="30dp"
             app:cardBackgroundColor="@color/green">
@@ -34,33 +59,34 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
             android:padding="5dp"
             android:gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
 
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="50dp">
-
-            <ImageView
-                android:id="@+id/back_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/arrow_left"/>
 
             <ImageView
                 android:id="@+id/room_type_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:layout_marginStart="20dp"/>
+                android:layout_marginStart="5dp"/>
 
             <TextView
                 android:id="@+id/room_name"
-                android:layout_marginStart="10dp"
-                android:layout_width="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
-                android:textSize="10pt"/>
+                android:textSize="9.5pt"
+                android:layout_weight="1"/>
+
+            <ImageView
+                android:id="@+id/room_other_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/other_ico"
+                android:translationZ="1dp"/>
 
 
 
@@ -68,6 +94,11 @@
 
         </androidx.cardview.widget.CardView>
 
-    </LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_below="@+id/room_head"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </RelativeLayout>
+
 
 </androidx.core.widget.NestedScrollView>

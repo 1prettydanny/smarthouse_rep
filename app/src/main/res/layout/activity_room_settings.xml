@@ -9,28 +9,62 @@
     android:background="@drawable/page_gradient"
     tools:context=".RoomSettingsActivity">
 
-<LinearLayout
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/room_settings_layout"
-    android:layout_centerHorizontal="true"
-    android:orientation="vertical">
+    android:layout_centerHorizontal="true">
 
     <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/headerImage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             app:shapeAppearanceOverlay="@style/RoundedTopCorners"
         />
 
+
+    <Button
+        android:id="@+id/back_btn"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/arrow_left"
+        android:layout_below="@id/headerImage"
+        android:layout_marginTop="15.5dp"
+        android:layout_marginStart="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/back_btn"
+        android:text="Device Manager"
+        android:layout_below="@id/headerImage"
+        android:fontFamily="@font/font_high"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:layout_marginStart="10dp"
+        android:textColor="@color/black"
+        android:textSize="9pt"/>
+
+    <Button
+        android:id="@+id/cancel_btn"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:background="@drawable/cancel_ico"
+        android:layout_below="@id/headerImage"
+        android:layout_marginTop="15.5dp"
+        android:layout_marginEnd="15dp"
+        android:layout_alignParentEnd="true"/>
 
     <LinearLayout
         android:id="@+id/room_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/back_btn"
         android:orientation="vertical"
         android:padding="10dp">
+
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -70,8 +104,8 @@
                         android:gravity="center_vertical"
                         android:padding="5dp"
                         android:text="Room Name"
-                        android:textColor="@color/_333333"
-                        android:textSize="18sp" />
+                        android:textColor="@color/black"
+                        android:textSize="9pt" />
 
                     <ImageButton
                         android:id="@+id/room_collapse_button"
@@ -114,10 +148,11 @@
                 android:id="@+id/categories_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/room_container"
                 android:layout_marginTop="5dp"
                 android:padding="2dp"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
 
-</LinearLayout>
+</RelativeLayout>
     </androidx.core.widget.NestedScrollView>

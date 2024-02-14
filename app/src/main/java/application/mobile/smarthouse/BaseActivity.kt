@@ -3,20 +3,15 @@ package application.mobile.smarthouse
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.location.GnssAntennaInfo.Listener
 import android.os.Bundle
-import android.view.View.OnTouchListener
-import android.view.accessibility.AccessibilityManager.TouchExplorationStateChangeListener
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toolbar
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import application.mobile.smarthouse.databinding.ActivityBaseBinding
-import application.mobile.smarthouse.ui.home.HomeFragment
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import application.mobile.smarthouse.ui.Profile.ProfileFragment
 
 
 class BaseActivity : AppCompatActivity() {
@@ -30,26 +25,12 @@ class BaseActivity : AppCompatActivity() {
         setContentView(binding.root)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
-        val customToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.my_toolbar)
-        toolbarTitle = customToolbar.findViewById(R.id.toolbar_title)
 
-        home_name = intent.getStringExtra("home_name")
-        if (home_name == null) {
-            GlobalObj.db.collection("homes")
-                .whereEqualTo("home_id", UserInfo.selected_home)
-                .get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        home_name= document["home_name"].toString()
-                        toolbarTitle?.text = home_name
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Toast.makeText(this, "errInitHome: " + exception.message, Toast.LENGTH_SHORT).show()
-                }
-        } else {
-            toolbarTitle?.text = home_name
-        }
+        val customToolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.my_toolbar)
+        val toolbarTitle = customToolbar.findViewById<TextView>(R.id.toolbar_title)
+        toolbarTitle.text = UserInfo.selected_home_name
+
+
 
 
         setSupportActionBar(customToolbar)
@@ -57,7 +38,6 @@ class BaseActivity : AppCompatActivity() {
         binding.navView.setupWithNavController(
             findNavController(R.id.nav_host_fragment_activity_base)
         )
-
 
 
 
@@ -129,14 +109,5 @@ class BaseActivity : AppCompatActivity() {
         }
     }
 
-    companion object{
-        fun setHomeTitle(){
-            toolbarTitle?.text = home_name
-        }
-
-        @SuppressLint("StaticFieldLeak")
-        var toolbarTitle: TextView? = null
-        var home_name: String? = null
-    }
 
 }

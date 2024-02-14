@@ -6,10 +6,13 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
 
-
+        <item name="android:popupMenuStyle">@style/MyPopupMenu</item>
 
     </style>
 
+    <style name="MyPopupMenu" parent="@android:style/Widget.Holo.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/rounded_other_button</item>
+    </style>
 
     <style name="Theme.SmartHouse" parent="Base.Theme.SmartHouse" />
 

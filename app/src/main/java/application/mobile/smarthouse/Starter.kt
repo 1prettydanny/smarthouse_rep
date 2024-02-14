@@ -1,5 +1,7 @@
 package application.mobile.smarthouse
 
+import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Bitmap
@@ -34,21 +36,18 @@ import java.io.ByteArrayOutputStream
 class Starter : AppCompatActivity() {
 
     private lateinit var binding: ActivityStarterBinding
-    private lateinit var sharedPreferences: SharedPreferences
-
     private lateinit var auth: FirebaseAuth
 
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
 
-        UserInfo.initializationUser(this) {
             if (currentUser == null) {
 
                 binding = ActivityStarterBinding.inflate(layoutInflater)
-                sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE)
                 onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
                 LoginManager.getInstance().logOut()
@@ -92,17 +91,18 @@ class Starter : AppCompatActivity() {
 
                 }
             } else {
-
-                val nextIntent = if (UserInfo.selected_home == "") {
-
-                    Intent(this@Starter, CreateHomeActivity::class.java)
-                } else {
-                    Intent(this@Starter, BaseActivity::class.java)
+                UserInfo.initializationUser(this, currentUser) {
+                    val nextIntent = if (UserInfo.selected_home_id == "") {
+                        Intent(this@Starter, CreateHomeActivity::class.java)
+                    } else {
+                        Intent(this@Starter, BaseActivity::class.java)
+                    }
+                    val anim = ActivityOptions.makeCustomAnimation(this, R.anim.slide_in_up,R.anim.slide_out_up)
+                    startActivity(nextIntent, anim.toBundle())
                 }
-               startActivity(nextIntent)
 
             }
-        }
+
     }
 
     private val signInLauncher = registerForActivityResult(StartActivityForResult()) { result ->
@@ -132,16 +132,6 @@ class Starter : AppCompatActivity() {
             }
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//
-//        when(requestCode) {
-//            RS_SIGN_IN -> {
-//                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//                handleGoogleSignInResult(task)
-//            }
-//        }
-//        super.onActivityResult(requestCode, resultCode, data)
-//    }
 
     private fun handleGoogleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
@@ -170,26 +160,17 @@ class Starter : AppCompatActivity() {
         private fun saveUserToCache(user: FirebaseUser?) {
             if (user != null) {
 
-
-                val image = GlobalObj.storage.child("profilePhoto/${user.uid.toString()}/profileph.jpg")
+                val image = GlobalObj.storage.child("profilePhoto/${user.uid}/profileph.jpg")
                 uploadProfileImage(user.photoUrl.toString(), image)
-
-                    val editor = sharedPreferences.edit()
-                    editor.putString("userId", user.uid)
-                    editor.putString("userName", user.displayName)
-                    editor.putString("userEmail", user.email)
-                    editor.apply()
-
 
                 uploadUserToDatabase(user.uid, user.displayName, user.email) {
 
-                    UserInfo.initializationUser(this@Starter) {
-                        val nextIntent: Intent
+                    UserInfo.initializationUser(this@Starter, user) {
 
-                        if (UserInfo.selected_home=="") {
-                            nextIntent = Intent(this@Starter, CreateHomeActivity::class.java)
+                        val nextIntent: Intent = if(UserInfo.selected_home_id=="") {
+                            Intent(this@Starter, CreateHomeActivity::class.java)
                         } else {
-                            nextIntent = Intent(this@Starter, BaseActivity::class.java)
+                            Intent(this@Starter, BaseActivity::class.java)
                         }
 
                         startActivity(nextIntent)
@@ -250,8 +231,5 @@ class Starter : AppCompatActivity() {
         intent.addCategory(Intent.CATEGORY_HOME)
         startActivity(intent)
         }
-    }
-    companion object {
-
     }
 }

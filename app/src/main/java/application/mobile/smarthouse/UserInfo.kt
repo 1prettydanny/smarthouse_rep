@@ -2,59 +2,65 @@ package application.mobile.smarthouse
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.storage.StorageReference
 import java.io.File
 
 
 object UserInfo {
 
+    private lateinit var sharedPreferences: SharedPreferences
     var user_id : String = ""
     var name  : String = ""
     private var email : String = ""
-    var selected_home: String = ""
     var profile_ph: String = ""
+    var selected_home_id: String = ""
+    var selected_home_name: String =""
 
-    fun initializationUser(context:Context, callback: () -> Unit){
+    @SuppressLint("SuspiciousIndentation")
+    fun initializationUser(context:Context, currentUser: FirebaseUser, callback: () -> Unit){
 
         sharedPreferences = context.getSharedPreferences("user_prefs", AppCompatActivity.MODE_PRIVATE)
 
-        val userId = sharedPreferences.getString("userId", "")
-        val userName = sharedPreferences.getString("userName", "")
-        val userEmail = sharedPreferences.getString("userEmail", "")
+        user_id = currentUser.uid.toString()
+        name = currentUser.displayName.toString()
+        email = currentUser.email.toString()
+
+        selected_home_id = sharedPreferences.getString("homeId","").toString()
+        selected_home_name = sharedPreferences.getString("homeName","").toString()
         profile_ph = sharedPreferences.getString("imagePath", "").toString()
-        if (userId != "" && userName!="" && userEmail!="") {
-            GlobalObj.db.collection("users")
-                .whereEqualTo("user_id", userId)
-                .whereEqualTo("name", userName)
-                .whereEqualTo("email", userEmail)
-                .get()
-                .addOnSuccessListener { result ->
-                    for (document in result) {
-                        user_id = document["user_id"].toString()
-                        name = document["name"].toString()
-                        email = document["email"].toString()
-                        if(document["selected_home"] != null)
-                        selected_home = document["selected_home"].toString()
+
+
+
+            if(selected_home_name == "") {
+                GlobalObj.db.collection("homes")
+                    .whereEqualTo("user_id", user_id)
+                    .get()
+                    .addOnSuccessListener { result ->
+                        for (document in result) {
+                            selected_home_id = document["home_id"].toString()
+                            selected_home_name = document["home_name"].toString()
+                            break
+                        }
+                        callback()
                     }
-
-                    callback()
-                }
-                .addOnFailureListener { exception ->
-                    Toast.makeText(context, "errInitU: " + exception.message, Toast.LENGTH_SHORT)
-                        .show()
-                    callback()
-                }
-
-        }
-        else {
+            }
+        else{
             callback()
         }
+
     }
 
-
-
+    fun changeSelectedHome(){
+        val editor = sharedPreferences.edit()
+        editor.putString("homeId", selected_home_id)
+        editor.putString("homeName", selected_home_name)
+        editor.apply()
+    }
 
     fun saveProfileImage(context: Context, image: StorageReference, callback: () -> Unit) {
 
@@ -75,11 +81,13 @@ object UserInfo {
     }
 
     fun clearInfo(){
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
         user_id = ""
         name   = ""
         email  = ""
         profile_ph = ""
-        selected_home =""
+        selected_home_id =""
     }
 }
-private lateinit var sharedPreferences: SharedPreferences

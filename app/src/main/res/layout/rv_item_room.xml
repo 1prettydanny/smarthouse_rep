@@ -17,7 +17,7 @@
             android:id="@+id/room_image_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/img_kitchen1"
+            android:adjustViewBounds="true"
             android:transitionName="roomImage" />
 
         <LinearLayout
@@ -36,7 +36,7 @@
 
             <TextView
                 android:id="@+id/room_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_weight="1"
@@ -44,7 +44,7 @@
 
             <ImageView
                 android:id="@+id/room_other_button"
-                android:layout_width="wrap_content"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/other_ico"
                 android:translationZ="1dp"

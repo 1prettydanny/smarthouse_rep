@@ -1,14 +1,12 @@
 package application.mobile.smarthouse
 
-import android.app.Activity
-import android.content.Intent
-import android.os.AsyncTask
+
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
-import application.mobile.smarthouse.databinding.ActivityBaseBinding
 import application.mobile.smarthouse.databinding.ActivityConnectionBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,6 +35,7 @@ class ConnectionActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun simulateConnection() {
 
 

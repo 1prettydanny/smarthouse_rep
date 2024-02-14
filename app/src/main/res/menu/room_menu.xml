@@ -5,23 +5,23 @@
         android:id="@+id/changePicture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/room_menu_change_photo"
+        android:icon="@drawable/context_menu_change_photo"
 
-        android:title="@string/change_picture"
+        android:title="@string/context_menu_change_picture"
        />
     <item
-        android:id="@+id/editRoom"
+        android:id="@+id/renameRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/room_menu_rename_ico"
-        android:title="@string/toolbar_edit_rooms_text"
+        android:icon="@drawable/context_menu_rename_ico"
+        android:title="@string/context_menu_rename_room_text"
         />
 
     <item
         android:id="@+id/deleteRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:icon="@drawable/room_menu_trash_ico"
-        android:title="@string/delete_room"
+        android:icon="@drawable/context_menu_trash_ico"
+        android:title="@string/context_menu_delete_room"
         />
 </menu>

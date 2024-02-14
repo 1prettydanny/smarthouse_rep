@@ -1,12 +1,11 @@
 package application.mobile.smarthouse
 
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,23 +13,18 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import application.mobile.smarthouse.databinding.ActivityCreateRoomBinding
-import java.util.Timer
-import java.util.TimerTask
 import java.util.UUID
-import kotlin.random.Random
 
 
 class CreateRoomActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateRoomBinding
-    val timer = Timer()
     var isFirstRun = true
-    var check_room: String? = null
+    var checkRoom: String? =  null
 
     data class RoomType(val typeName: String, val icon: Int)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,9 +34,6 @@ class CreateRoomActivity : AppCompatActivity() {
         setContentView(binding.root)
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
-        var myTask: TimerTask? = null
-
-
         val roomTypes = arrayListOf(
             RoomType("Choose your room type", R.drawable.arrow_down),
             RoomType("Classic", R.drawable.room_type_classic_ico),
@@ -51,30 +42,29 @@ class CreateRoomActivity : AppCompatActivity() {
         )
 
 
-        check_room = intent.getStringExtra("room_id")
-        val arrType: MutableList<RoomType> = arrayListOf()
+        val arrType = mutableListOf<RoomType>()
         arrType.addAll(roomTypes)
         val adapter = RoomTypeAdapter(this, arrType)
-        val roomTypeSpinner= binding.spinner
+        val roomTypeSpinner= binding.roomTypeSpinner
         roomTypeSpinner.adapter = adapter
 
 
-
-        if(check_room!= null) {
+        checkRoom = intent.getStringExtra("room_id")
+        if(checkRoom!= null) {
             isFirstRun=false
-            val name_of_room = intent.getStringExtra("room_name")
-            binding.roomNameInput.setText(name_of_room)
+            val nameOfRoom = intent.getStringExtra("room_name")
+            binding.roomNameInput.setText(nameOfRoom)
 
-            val type_of_room = intent.getIntExtra("room_type", -1)
+            val typeOfRoom = intent.getStringExtra("room_type").toString()
 
             arrType.removeAt(0)
             adapter.notifyDataSetChanged()
 
 
-            val index = when (type_of_room) {
-                R.drawable.room_type_classic_ico -> 0
-                R.drawable.room_type_kitchen_ico -> 1
-                R.drawable.room_type_bathroom_ico -> 2
+            val index = when (typeOfRoom) {
+                "Classic" -> 0
+                "Kitchen" -> 1
+                "Bathroom" -> 2
                 else -> -1
             }
             val selectedRoomType = arrType.removeAt(index)
@@ -82,14 +72,13 @@ class CreateRoomActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             roomTypeSpinner.setSelection(0)
         }
+
         roomTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
             override fun onItemSelected(
                 parentView: AdapterView<*>?, selectedItemView: View?,
                 position: Int, id: Long
             ) {
-
-
                 if (position !=0) {
                     val selectedRoomType = arrType.removeAt(position)
                     arrType.add(0, selectedRoomType)
@@ -109,74 +98,27 @@ class CreateRoomActivity : AppCompatActivity() {
         }
 
 
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                try {
-                    if ((s!!.length < 3) || (s!!.length >= 25)) {
-                        myTask?.cancel()
-
-                        myTask = object : TimerTask() {
-                            override fun run() {
-                                runOnUiThread {
-                                    if (s!!.length <= 3)
-                                        binding.roomErrorInput.text =
-                                            getString(R.string.short_room_name_error)
-                                    else
-                                        binding.roomErrorInput.text =
-                                            getString(R.string.long_room_name_error)
-
-                                    binding.roomErrorInput.visibility = View.VISIBLE
-                                    binding.roomNameInput.background = ContextCompat.getDrawable(
-                                        this@CreateRoomActivity,
-                                        R.drawable.rounded_edit_text
-                                    )
-                                }
-                            }
-                        }
-                        timer.schedule(myTask, 1000)
-                    } else {
-                        myTask?.cancel()
-                        binding.roomErrorInput.visibility = View.GONE
-                        binding.roomNameInput.background = ContextCompat.getDrawable(
-                            this@CreateRoomActivity,
-                            R.drawable.rounded_selected_edit_text
-                        )
-                    }
-                } catch (_: Exception) {
-                }
-
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-        }
-
-        binding.roomNameInput.addTextChangedListener(textWatcher)
-
-        binding.backBtn.setOnClickListener{
+        binding.roomNameInput.addTextChangedListener(GlobalFun.getTextWatcher(binding.roomNameInput,binding.roomErrorInput,this@CreateRoomActivity))
+        binding.cancelBtn.setOnClickListener {
             onBackPressedCallback.handleOnBackPressed()
         }
 
+
+
+
         binding.createRoomBtn.setOnClickListener {
 
+            val roomName: String = binding.roomNameInput.text.toString().trim()
 
+            val roomType = binding.roomTypeSpinner.selectedItem as RoomType
 
-            val room_name: String = binding.roomNameInput.text.toString().trim()
-
-            val room_type = binding.spinner.selectedItem as RoomType
-
-            if (room_name.length < 3) {
+            if (roomName.length < 3) {
                 binding.roomErrorInput.visibility = View.VISIBLE
                 binding.roomErrorInput.text = getString(R.string.short_room_name_error)
                 return@setOnClickListener
             }
 
-            if (room_name.length > 25) {
+            if (roomName.length > 25) {
                 binding.roomErrorInput.visibility = View.VISIBLE
                 binding.roomErrorInput.text = getString(R.string.long_room_name_error)
                 return@setOnClickListener
@@ -187,130 +129,96 @@ class CreateRoomActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val randomImageResource = randomImage(room_type.icon)
+            val randomImageResource = GlobalFun.randomImage(roomType.typeName)
 
+            if(checkRoom!=null) {
 
-            if(check_room==null) {
-
-                val room_id = UUID.randomUUID().toString()
-
-                val home_id = UserInfo.selected_home
-
-
-                val room = hashMapOf(
-                    "room_id" to room_id,
-                    "home_id" to home_id,
-                    "room_name" to room_name,
-                    "room_type" to room_type.icon,
-                    "room_image" to randomImageResource
-                )
-
-                GlobalObj.db.collection("rooms").add(room)
-                val intent = Intent(this, RoomSettingsActivity::class.java)
-                intent.putExtra("room_id", room_id)
-                intent.putExtra("room_name", room_name)
-                intent.putExtra("room_image", randomImageResource)
-                intent.putExtra("room_type", room_type.icon)
-                startActivity(intent)
-            }
-            else{
-
-                val reference = GlobalObj.db.collection("rooms")
                 var docId: String? = null
-                reference.whereEqualTo("room_id",check_room)
+                val reference = GlobalObj.db.collection("rooms")
+                reference.whereEqualTo("room_id", checkRoom)
                     .get()
                     .addOnSuccessListener {
                         for(document in it) {
-                             docId = document.id
+                            docId = document.id
                         }
                         val updates = hashMapOf<String, Any>(
-                            "room_name" to room_name,
-                            "room_type" to room_type.icon
+                            "room_name" to roomName,
+                            "room_type" to roomType.typeName
                         )
                         if(docId!=null) {
                             reference.document(docId!!)
                                 .update(updates)
-                                .addOnCompleteListener {
-                                    val intent = Intent(this, RoomSettingsActivity::class.java)
-                                    intent.putExtra("room_id", check_room)
-                                    intent.putExtra("room_name", room_name)
-                                    intent.putExtra("room_image", randomImageResource)
-                                    intent.putExtra("room_type", room_type.icon)
-                                    startActivity(intent)
-                                }
                         }
 
                     }
+                nextActivity(roomName, randomImageResource, roomType.typeName)
+            }
+            else{
+                val roomId = UUID.randomUUID().toString()
+
+                val homeId = UserInfo.selected_home_id
+
+
+                val room = hashMapOf(
+                    "room_id" to roomId,
+                    "home_id" to homeId,
+                    "room_name" to roomName,
+                    "room_type" to roomType.typeName,
+                    "room_image" to randomImageResource
+                )
+                checkRoom = roomId
+                GlobalObj.db.collection("rooms").add(room)
+                nextActivity(roomName, randomImageResource, roomType.typeName)
 
             }
-
-
 
         }
     }
 
-    private fun randomImage(icon: Int): Int{
-
-        val imagesArray = when (icon) {
-            R.drawable.room_type_classic_ico -> arrayOf(
-                R.drawable.img_classic1,
-                R.drawable.img_classic2,
-                R.drawable.img_classic3,
-                R.drawable.img_classic4
-            )
-
-            R.drawable.room_type_kitchen_ico -> arrayOf(
-                R.drawable.img_kitchen1,
-                R.drawable.img_kitchen2,
-                R.drawable.img_kitchen3,
-                R.drawable.img_kitchen4
-            )
-
-            R.drawable.room_type_bathroom_ico -> arrayOf(
-                R.drawable.img_bathroom1,
-                R.drawable.img_bathroom2,
-                R.drawable.img_bathroom3,
-                R.drawable.img_bathroom4
-            )
-
-            else -> emptyArray()
-        }
-
-        return if (imagesArray.isNotEmpty()) {
-            imagesArray[Random.nextInt(imagesArray.size)]
-        } else {
-            -1
-        }
+    private fun nextActivity(roomName: String, image: String, type: String){
+        val intent = Intent(this, RoomSettingsActivity::class.java)
+        intent.putExtra("room_id", checkRoom)
+        intent.putExtra("room_name", roomName)
+        intent.putExtra("room_image", image)
+        intent.putExtra("room_type", type)
+        val animationBundle = ActivityOptions.makeCustomAnimation(
+            this@CreateRoomActivity,
+            R.anim.slide_in_right,
+            R.anim.slide_out_left
+        ).toBundle()
+        startActivity(intent, animationBundle)
     }
 
 
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if(check_room != null) {
-                val reference = GlobalObj.db.collection("rooms")
-                var docId: String? = null
-                reference.whereEqualTo("room_id", check_room)
-                    .get()
-                    .addOnSuccessListener {
-                        for (document in it) {
-                            docId = document.id
-                        }
-
-                        if (docId != null) {
-                            reference.document(docId!!).delete()
-                        }
-                    }
+            if(checkRoom != null) {
+                GlobalFun.deleteRoom(checkRoom!!) {
+                    backActivity()
+                    finish()
+                }
             }
-            finish()
-            val intent = Intent(this@CreateRoomActivity,BaseActivity::class.java)
-            startActivity(intent)
+            else{
+                backActivity()
+                finish()
+            }
         }
+    }
+
+    fun backActivity(){
+        val intent = Intent(this@CreateRoomActivity,BaseActivity::class.java)
+        val animationBundle = ActivityOptions.makeCustomAnimation(
+            this@CreateRoomActivity,
+            R.anim.slide_in_left,
+            R.anim.slide_out_right
+        ).toBundle()
+        startActivity(intent,animationBundle)
     }
 
 
     override fun onDestroy() {
         isFirstRun=true
-        timer.cancel()
+        GlobalFun.stopTimer()
         super.onDestroy()
     }
 
@@ -319,16 +227,16 @@ class CreateRoomActivity : AppCompatActivity() {
 
         @SuppressLint("ViewHolder")
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view = LayoutInflater.from(context).inflate(R.layout.room_type_view, parent, false)
+            val view = LayoutInflater.from(context).inflate(R.layout.spinner_item_room_type, parent, false)
             val roomTypeLayout= view.findViewById<LinearLayout>(R.id.room_type_layout)
             val iconImageView = view.findViewById<ImageView>(R.id.room_type_icon)
             val typeTextView = view.findViewById<TextView>(R.id.room_type_name)
 
 
 
-            val roomType = getItem(position)
-            iconImageView.setImageResource(roomType?.icon ?: R.drawable.menu_home_ico)
-            typeTextView.text = roomType?.typeName
+            val roomType = getItem(position) as RoomType
+            iconImageView.setImageDrawable(ContextCompat.getDrawable(this@CreateRoomActivity,roomType.icon))
+            typeTextView.text = roomType.typeName
 
 
             if (isFirstRun) {
