@@ -176,7 +176,7 @@ class CreateRoomActivity : AppCompatActivity() {
     }
 
     private fun nextActivity(roomName: String, image: String, type: String){
-        val intent = Intent(this, RoomSettingsActivity::class.java)
+        val intent = Intent(this, DeviceConnectionActivity::class.java)
         intent.putExtra("room_id", checkRoom)
         intent.putExtra("room_name", roomName)
         intent.putExtra("room_image", image)

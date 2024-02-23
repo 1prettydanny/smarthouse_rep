@@ -1,7 +1,6 @@
 package application.mobile.smarthouse
 
 import android.app.Activity
-import android.content.SharedPreferences
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -54,7 +53,21 @@ class GlobalFun {
             }
         }
 
-        fun iconDevice(name: String): Int{
+        fun getIconCategory(name: String): Int{
+            return when(name){
+                "Kitchen" -> R.drawable.room_type_kitchen_ico
+                "Bathroom" -> R.drawable.room_type_bathroom_ico
+                "Lighting" -> R.drawable.category_sun_ico
+                "Climate"-> R.drawable.category_temp_ico
+                "Energy" -> R.drawable.category_lightning_ico
+                "Security" -> R.drawable.category_security_ico
+                "Entertainment"->R.drawable.category_tv_ico
+                "Other"-> R.drawable.category_other_ico
+                else -> {R.drawable.smile_icon}
+            }
+        }
+
+        fun getIconDevice(name: String): Int{
             return when(name){
                 "Bulb" -> R.drawable.new_bulb_ico
                 "Chandelier" -> R.drawable.new_chandelier_ico

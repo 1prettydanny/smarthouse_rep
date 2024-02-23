@@ -1,18 +1,29 @@
 package application.mobile.smarthouse
 
+import android.annotation.SuppressLint
 import android.app.ActivityOptions
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.MenuInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import application.mobile.smarthouse.databinding.ActivityRoomBinding
+import org.checkerframework.checker.units.qual.C
+import java.util.Locale.Category
 
-data class Device(val id: String, var name: String, val category: String){
+data class Device(val id: String, var name: String, var order: Int, val category: String){
     companion object {
         private val countersMap = mutableMapOf<String, Int>()
 
@@ -32,10 +43,13 @@ data class Device(val id: String, var name: String, val category: String){
         }
     }
 }
+
+data class Category(val name: String, val icon: Int, val devices: List<Device>)
 class RoomActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRoomBinding
 
+    @SuppressLint("DiscouragedPrivateApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -70,15 +84,32 @@ class RoomActivity : AppCompatActivity() {
                 for(document in documents){
                     val id = document["device_id"].toString()
                     val name = document["device_name"].toString()
-                    val category = document["device_category"].toString()
+                    val devCategory = document["device_category"].toString()
+                    val order = document["device_order"].toString().toInt()
 
-                    devicesArr.add(Device(id,name + " ${Device.getNextId(name)}",category))
+                    devicesArr.add(Device(id, name, order, devCategory))
 
-                    if (!categoryArr.contains(category)) {
-                        categoryArr.add(category)
+                    if (!categoryArr.contains(devCategory)) {
+                        categoryArr.add(devCategory)
                     }
-                }
 
+                    val orderList = mutableListOf("Lighting", "Climate", "Energy", "Security", "Entertainment")
+
+                    val sorted = categoryArr.sortedWith(compareBy({ it !in orderList }, { orderList.indexOf(it) }))
+
+                    val categories = mutableListOf<application.mobile.smarthouse.Category>()
+                        sorted.forEach {categoryName->
+                            categories.add(
+                                Category(
+                                    categoryName,
+                                    GlobalFun.getIconCategory(categoryName),
+                                    devicesArr.filter { categoryName == it.category }
+                                    )
+                                )
+                            }
+                    val categoriesAdapter = CategoryAdapter(categories, this)
+                    binding.categoryRv.adapter = categoriesAdapter
+                }
             }
 
 
@@ -151,6 +182,7 @@ class RoomActivity : AppCompatActivity() {
             }
         }
     }
+
     private val onBackPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             val intent = Intent(this@RoomActivity, BaseActivity::class.java)
@@ -159,3 +191,74 @@ class RoomActivity : AppCompatActivity() {
         }
     }
 }
+
+class CategoryAdapter(private val categories: MutableList<application.mobile.smarthouse.Category>, private val listener: Context) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.rv_item_category, parent, false)
+        return CategoryViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
+        holder.bind(categories[position])
+    }
+
+    override fun getItemCount(): Int {
+        return categories.size
+    }
+
+    inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+        fun bind(category: application.mobile.smarthouse.Category) {
+            val categoryName: TextView = itemView.findViewById(R.id.category_name)
+            val devicesRecyclerView: RecyclerView = itemView.findViewById(R.id.devices_rv)
+            val image: ImageView = itemView.findViewById((R.id.category_image))
+
+
+
+            categoryName.text = category.name
+            image.setImageDrawable(ContextCompat.getDrawable(itemView.context, GlobalFun.getIconCategory(category.name)))
+            val deviceConnectionAdapter = DeviceAdapter(category.devices, listener)
+            devicesRecyclerView.layoutManager = GridLayoutManager(itemView.context, 3)
+            devicesRecyclerView.adapter = deviceConnectionAdapter
+        }
+    }
+}
+class DeviceAdapter(private val devices: List<Device>, private val listener: Context) : RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DeviceViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.rv_item_device, parent, false)
+        return DeviceViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
+        holder.bind(devices[position])
+    }
+
+    override fun getItemCount(): Int {
+        return devices.size
+    }
+
+    inner class DeviceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val deviceName: TextView = itemView.findViewById(R.id.deviceName)
+        private val deviceImageView: ImageView = itemView.findViewById(R.id.deviceImageView)
+        fun bind(device: Device) {
+            Device.getNextId(device.name)
+            val fullName = device.name + " ${device.order}"
+            deviceName.text =  fullName
+
+            deviceImageView.setImageDrawable(ContextCompat.getDrawable(itemView.context, GlobalFun.getIconDevice(device.name)))
+
+            itemView.setOnClickListener {
+                val intent = Intent(listener, DeviceActivity::class.java)
+                val anim = ActivityOptions.makeCustomAnimation(listener, R.anim.slide_in_right, R.anim.slide_out_left)
+                listener.startActivity(intent, anim.toBundle())
+            }
+
+        }
+
+    }
+
+
+}
+

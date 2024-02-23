@@ -95,9 +95,14 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/category_rv"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
             android:layout_below="@+id/room_head"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            app:reverseLayout="true"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
     </RelativeLayout>
 
 
