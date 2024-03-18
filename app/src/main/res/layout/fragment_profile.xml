@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
+    android:padding="10dp"
     tools:context=".ui.Profile.ProfileFragment">
 
     <androidx.cardview.widget.CardView
@@ -39,19 +39,19 @@
 
     <Spinner
         android:id="@+id/home_spinner"
-        android:layout_width="290dp"
+        android:layout_width="320dp"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/page_gradient"
         android:popupBackground="@drawable/rounded_spinner"
         android:scrollbarThumbHorizontal="@color/ic_launcher_background"
         android:layout_below="@id/profile_name"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"/>
-        <ImageView
+
+    <ImageView
             android:id="@+id/collapse_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginTop="44dp"
             android:layout_below="@id/profile_name"
             android:layout_toEndOf="@id/home_spinner"

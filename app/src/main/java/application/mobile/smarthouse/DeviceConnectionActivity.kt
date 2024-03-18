@@ -247,8 +247,8 @@ class DeviceConnectionActivity : AppCompatActivity(), DeviceConnection {
                 true
             }
             DragEvent.ACTION_DROP ->{
-                val name = event.clipData.getItemAt(0).toString()
-                val category = event.clipData.getItemAt(1).toString()
+                val name = event.clipData.getItemAt(0).text.toString()
+                val category = event.clipData.getItemAt(1).text.toString()
                 addDevice(name, category)
                 true
             }
